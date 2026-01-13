@@ -1,0 +1,42 @@
+\documentclass{article}
+\usepackage{plantuml}
+\begin{document}
+\section{Petit bac UML Diagrams}
+\subsection{Use Case Diagram}
+
+This is the Use Case Diagram:\\
+
+\begin{plantuml}
+  @startuml
+    left to right direction
+    skinparam packageStyle rectangle
+
+    actor Joueur
+    actor "Système de jeu" as System
+
+    rectangle "Jeu du Petit Bac" {
+
+    Joueur -- (Créer une partie)
+    Joueur -- (Rejoindre une partie)
+    Joueur -- (Choisir les catégories)
+    Joueur -- (Lancer la manche)
+    Joueur -- (Saisir les réponses)
+    Joueur -- (Annoncer Stop)
+    Joueur -- (Consulter le score)
+
+    (Lancer la manche) --> (Générer une lettre aléatoire)
+    (Annoncer Stop) --> (Arrêter le chronomètre)
+    (Saisir les réponses) --> (Valider les réponses)
+    (Valider les réponses) --> (Calculer les points)
+    (Calculer les points) --> (Afficher le score)
+
+    System -- (Générer une lettre aléatoire)
+    System -- (Arrêter le chronomètre)
+    System -- (Valider les réponses)
+    System -- (Calculer les points)
+    System -- (Afficher le score)
+    }
+
+  @enduml
+\end{plantuml}
+\end{document}
