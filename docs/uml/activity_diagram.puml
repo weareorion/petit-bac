@@ -1,0 +1,45 @@
+@startuml UML Jeu du Petit Bac - Diagramme d'activité
+    ' Resize diagram to 500 pixels height
+    scale 500 height
+    title Jeu du Petit Bac
+    skinparam linetype polyline
+    skinparam linetype ortho
+
+
+    start
+
+    :Ouvrir l'application;
+
+    if (Créer ou rejoindre une partie ?) then (Créer)
+    :Créer une partie;
+    :Choisir les catégories; 
+    else (Rejoindre)
+    #palegreen;line:green;line.dashed;:Rejoindre une partie existante; 
+    endif
+
+    :Lancer la manche;
+    :Générer une lettre aléatoire;
+    :Démarrer le chronomètre;
+
+    while (Temps restant ?) is (Oui)
+    :Saisir les réponses\n(par catégorie);
+    endwhile (Non)
+
+    if (Un joueur dit STOP ?) then (Oui)
+    :Arrêter le chronomètre;
+    endif
+
+    :Valider les réponses;
+    :Comparer les réponses\nentre joueurs;
+    :Calculer les points;
+    :Afficher les scores;
+
+    if (Nouvelle manche ?) then (Oui)
+    :Relancer une manche;
+    :lar la manche;
+    else (Non)
+    :Afficher le classement final;
+    endif
+
+    stop
+@enduml
