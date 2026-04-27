@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import './NavBar.dart'; // Assure-toi que le nom du fichier correspond
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -82,17 +83,8 @@ class HomeScreen extends StatelessWidget {
         ),
       ),
 
-      // Navigation bar
-      bottomNavigationBar: BottomNavigationBar(
-        selectedItemColor: Colors.blueAccent,
-        unselectedItemColor: Colors.grey,
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: "Accueil"),
-          BottomNavigationBarItem(icon: Icon(Icons.emoji_events), label: "Scores"),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: "Profil"),
-          BottomNavigationBarItem(icon: Icon(Icons.settings), label: "Paramètres"),
-        ],
-      ),
+      // NavBar 
+      bottomNavigationBar: const NavBar(),
     );
   }
 }
