@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:petit_bac/ui/HomeScreen.dart';
+import 'package:petit_bac/ui/Settings.dart';
 
 void main() {
   runApp(const MyApp());
@@ -20,6 +21,8 @@ class MyApp extends StatelessWidget {
       ),
       routes: {
         '/' : (context) => const HomeScreen(),
+        '/settings' : (context) => const Settings(),
+        
       },
     );
   }
