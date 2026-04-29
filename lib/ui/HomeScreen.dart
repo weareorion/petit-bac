@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:petit_bac/ui/LetterGenerator.dart';
 import './NavBar.dart'; 
 
 class HomeScreen extends StatelessWidget {
@@ -42,7 +43,14 @@ class HomeScreen extends StatelessWidget {
 
             // Boutons
             ElevatedButton.icon(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const LetterSpin(),
+                  )
+                );
+
+              },
               icon: const Icon(Icons.play_arrow),
               label: const Text("Jouer"),
               style: ElevatedButton.styleFrom(
