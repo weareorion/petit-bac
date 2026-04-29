@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import './NavBar.dart'; // Assure-toi que le nom du fichier correspond
+import './NavBar.dart'; 
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -84,7 +84,7 @@ class HomeScreen extends StatelessWidget {
       ),
 
       // NavBar 
-      bottomNavigationBar: const NavBar(),
+      bottomNavigationBar: const NavBar(currentIndex: 0),
     );
   }
 }
