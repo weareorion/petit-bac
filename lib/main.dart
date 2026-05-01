@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:petit_bac/ui/GameScreen.dart';
 import 'package:petit_bac/ui/HomeScreen.dart';
 import 'package:petit_bac/ui/LetterGenerator.dart';
 import 'package:petit_bac/ui/Settings.dart';
@@ -24,6 +25,10 @@ class MyApp extends StatelessWidget {
         '/' : (context) => const HomeScreen(),
         '/settings' : (context) => const Settings(),
         '/letter' : (context) => const LetterSpin(),
+        '/play' : (context) {
+          final String letter = ModalRoute.of(context)!.settings.arguments as String;
+          return GameScreen(selectedLetter: letter);
+        },
         
       },
     );
