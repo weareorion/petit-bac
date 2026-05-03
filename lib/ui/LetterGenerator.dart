@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'GameScreen.dart';
 
 class LetterSpin extends StatefulWidget {
   const LetterSpin({super.key});
@@ -191,7 +192,13 @@ class _LetterSpinState extends State<LetterSpin> {
                   color: primaryColor,
                   textColor: Colors.white,
                   onTap: () {
-                    // Action pour lancer le jeu
+                    
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => GameScreen(selectedLetter: _currentLetter),
+                      ),
+                    );
                   },
                 ),
                 const SizedBox(height: 12),
@@ -231,7 +238,6 @@ class _LetterSpinState extends State<LetterSpin> {
     );
   }
 
-  // Widget de bouton réutilisable pour garder le code propre
   Widget _buildActionButton({
     required String label,
     required IconData icon,
