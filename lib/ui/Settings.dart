@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import './NavBar.dart';
+
 class Settings extends StatelessWidget {
   const Settings({super.key});
 
@@ -12,7 +13,7 @@ class Settings extends StatelessWidget {
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios, color: Colors.blueAccent),
-          onPressed: () => Navigator.pop(context),
+          onPressed: () => Navigator.popAndPushNamed(context, '/'),
         ),
         title: const Text(
           'Réglages',
@@ -71,7 +72,7 @@ class Settings extends StatelessWidget {
                 textColor: Colors.redAccent,
                 iconColor: Colors.redAccent,
                 onTap: () {
-                  // Logique de déconnexion
+                  // Deconnexion
                 },
               ),
             ]),
@@ -79,9 +80,15 @@ class Settings extends StatelessWidget {
             const Center(
               child: Column(
                 children: [
-                  Text('Version 2.4.0', style: TextStyle(color: Colors.grey, fontSize: 12)),
+                  Text(
+                    'Version 2.4.0',
+                    style: TextStyle(color: Colors.grey, fontSize: 12),
+                  ),
                   SizedBox(height: 4),
-                  Text('© 2024 Petit Bac Word Game', style: TextStyle(color: Colors.grey, fontSize: 12)),
+                  Text(
+                    '© 2024 Petit Bac Word Game',
+                    style: TextStyle(color: Colors.grey, fontSize: 12),
+                  ),
                 ],
               ),
             ),
@@ -89,12 +96,12 @@ class Settings extends StatelessWidget {
           ],
         ),
       ),
-      // Utilisation de ton composant centralisé
-      bottomNavigationBar: const NavBar(currentIndex: 3), 
+
+      bottomNavigationBar: const NavBar(currentIndex: 3),
     );
   }
 
-  // --- Composants internes gardés ---
+  // --- Composants internes ---
 
   Widget _buildProfileCard() {
     return Container(
@@ -111,21 +118,37 @@ class Settings extends StatelessWidget {
               color: Colors.blueAccent.withOpacity(0.1),
               borderRadius: BorderRadius.circular(15),
             ),
-            child: const Icon(Icons.person_outline, color: Colors.blueAccent, size: 30),
+            child: const Icon(
+              Icons.person_outline,
+              color: Colors.blueAccent,
+              size: 30,
+            ),
           ),
           const SizedBox(width: 15),
           const Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Utilisateur', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
-                Text('Niveau 12 • 4,250 XP', style: TextStyle(color: Colors.grey)),
+                Text(
+                  'Utilisateur',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                ),
+                Text(
+                  'Niveau 12 • 4,250 XP',
+                  style: TextStyle(color: Colors.grey),
+                ),
               ],
             ),
           ),
           TextButton(
             onPressed: () {},
-            child: const Text('Modifier', style: TextStyle(color: Colors.blueAccent, fontWeight: FontWeight.bold)),
+            child: const Text(
+              'Modifier',
+              style: TextStyle(
+                color: Colors.blueAccent,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
           ),
         ],
       ),
@@ -137,7 +160,11 @@ class Settings extends StatelessWidget {
       padding: const EdgeInsets.only(left: 5, bottom: 10),
       child: Text(
         title,
-        style: const TextStyle(color: Colors.grey, fontWeight: FontWeight.bold, fontSize: 12),
+        style: const TextStyle(
+          color: Colors.grey,
+          fontWeight: FontWeight.bold,
+          fontSize: 12,
+        ),
       ),
     );
   }
