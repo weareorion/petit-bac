@@ -1,17 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:petit_bac/ui/CorrectionScreen.dart';
 
 class ResultScreen extends StatelessWidget {
   final int score;
   final int totalPossible;
   final int correctAnswers;
   final int errors;
+  
+  // Correction
+  final String selectedLetter;
+  final Map<String, String> userAnswers;
+  final Map<String, bool> validationResults;
 
   const ResultScreen({
     super.key,
-    this.score = 65,
+    this.score = 0,
     this.totalPossible = 70,
-    this.correctAnswers = 13,
-    this.errors = 1,
+    this.correctAnswers = 0,
+    this.errors = 0,
+    this.selectedLetter = "",
+    this.userAnswers = const {},
+    this.validationResults = const {},
   });
 
   @override
@@ -33,20 +42,14 @@ class ResultScreen extends StatelessWidget {
                   padding: const EdgeInsets.only(top: 16.0),
                   child: GestureDetector(
                     onTap: () {
-                      Navigator.pushNamedAndRemoveUntil(
-                        context,
-                        '/',
-                        (route) => false,
-                      );
+                      Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
                     },
                     child: Container(
                       padding: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
                         color: Colors.white,
                         shape: BoxShape.circle,
-                        border: Border.all(
-                          color: Colors.black.withOpacity(0.05),
-                        ),
+                        border: Border.all(color: Colors.black.withOpacity(0.05)),
                         boxShadow: [
                           BoxShadow(
                             color: Colors.black.withOpacity(0.05),
@@ -54,11 +57,7 @@ class ResultScreen extends StatelessWidget {
                           ),
                         ],
                       ),
-                      child: const Icon(
-                        Icons.close_rounded,
-                        color: Colors.grey,
-                        size: 24,
-                      ),
+                      child: const Icon(Icons.close_rounded, color: Colors.grey, size: 24),
                     ),
                   ),
                 ),
@@ -88,7 +87,7 @@ class ResultScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 40),
 
-                    // Indicateur de score
+                    // Indicateur de score circulaire
                     Stack(
                       alignment: Alignment.center,
                       children: [
@@ -96,12 +95,10 @@ class ResultScreen extends StatelessWidget {
                           width: 200,
                           height: 200,
                           child: CircularProgressIndicator(
-                            value: score / totalPossible,
+                            value: totalPossible > 0 ? score / totalPossible : 0,
                             strokeWidth: 12,
                             backgroundColor: primaryColor.withOpacity(0.1),
-                            valueColor: const AlwaysStoppedAnimation<Color>(
-                              primaryColor,
-                            ),
+                            valueColor: const AlwaysStoppedAnimation<Color>(primaryColor),
                             strokeCap: StrokeCap.round,
                           ),
                         ),
@@ -130,7 +127,7 @@ class ResultScreen extends StatelessWidget {
 
                     const SizedBox(height: 48),
 
-                    //  Correct / Erreurs
+                    // Stats Correct / Erreurs
                     Row(
                       children: [
                         Expanded(
@@ -155,14 +152,23 @@ class ResultScreen extends StatelessWidget {
 
                     const SizedBox(height: 40),
 
-                    //  Voir la correction
+                    // Bouton Voir la correction
                     _buildActionButton(
                       label: 'Voir la correction',
                       icon: Icons.assignment_turned_in_rounded,
                       color: Colors.white,
                       textColor: const Color(0xFF1A1D21),
                       onTap: () {
-                        // Action correction
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => CorrectionScreen(
+                              selectedLetter: selectedLetter,
+                              userAnswers: userAnswers,
+                              validationResults: validationResults,
+                            ),
+                          ),
+                        );
                       },
                       hasBorder: true,
                     ),
@@ -176,12 +182,7 @@ class ResultScreen extends StatelessWidget {
                       color: primaryColor,
                       textColor: Colors.white,
                       onTap: () {
-                        Navigator.pushNamedAndRemoveUntil(
-                          context,
-                          '/',
-                          (route) => false,
-                        );
-                        Navigator.pushNamed(context, '/letter');
+                        Navigator.pushNamedAndRemoveUntil(context, '/letter', (route) => false);
                       },
                     ),
                   ],
@@ -247,27 +248,19 @@ class ResultScreen extends StatelessWidget {
         decoration: BoxDecoration(
           color: color,
           borderRadius: BorderRadius.circular(20),
-          border: hasBorder
-              ? Border.all(color: Colors.black.withOpacity(0.05))
-              : null,
-          boxShadow: !hasBorder
-              ? [
-                  BoxShadow(
-                    color: Colors.blueAccent.withOpacity(0.2),
-                    blurRadius: 15,
-                    offset: const Offset(0, 8),
-                  ),
-                ]
-              : null,
+          border: hasBorder ? Border.all(color: Colors.black.withOpacity(0.05)) : null,
+          boxShadow: !hasBorder ? [
+            BoxShadow(
+              color: Colors.blueAccent.withOpacity(0.2),
+              blurRadius: 15,
+              offset: const Offset(0, 8),
+            ),
+          ] : null,
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              icon,
-              color: hasBorder ? Colors.blueAccent : textColor,
-              size: 24,
-            ),
+            Icon(icon, color: hasBorder ? Colors.blueAccent : textColor, size: 24),
             const SizedBox(width: 12),
             Text(
               label,
