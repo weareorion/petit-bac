@@ -1,5 +1,8 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:petit_bac/ui/ResultScreen.dart';
 
 class GameScreen extends StatefulWidget {
   final String selectedLetter;
@@ -11,8 +14,19 @@ class GameScreen extends StatefulWidget {
 }
 
 class _GameScreenState extends State<GameScreen> {
-  int _secondsRemaining = 102; 
+  int _secondsRemaining = 102;
   Timer? _timer;
+  bool _isLoading = false;
+
+  final Map<String, TextEditingController> _controllers = {
+    "PAYS": TextEditingController(),
+    "FRUITS": TextEditingController(),
+    "VOITURES": TextEditingController(),
+    "OBJET": TextEditingController(),
+    "PRÉNOM FILLE": TextEditingController(),
+    "PRÉNOM GARÇON": TextEditingController(),
+    "ANIMAL": TextEditingController(),
+  };
 
   @override
   void initState() {
@@ -26,9 +40,91 @@ class _GameScreenState extends State<GameScreen> {
         setState(() => _secondsRemaining--);
       } else {
         _timer?.cancel();
-        Navigator.pop(context);
+        _finishGame();
       }
     });
+  }
+
+  // --- LOGIQUE DE VALIDATION WIKIPEDIA ---
+
+  Future<bool> _isValidWord(String word) async {
+    String trimmedWord = word.trim();
+
+    
+    if (trimmedWord.length < 2) return false;
+
+    
+    if (!trimmedWord.toUpperCase().startsWith(
+      widget.selectedLetter.toUpperCase(),
+    )) {
+      return false;
+    }
+
+    try {
+      final response = await http.get(
+        Uri.parse(
+          'https://fr.wikipedia.org/w/api.php?action=query&format=json&titles=$trimmedWord&prop=info',
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        final pages = data['query']['pages'] as Map<String, dynamic>;
+
+        if (pages.containsKey("-1")) {
+          return false;
+        }
+
+        var pageId = pages.keys.first;
+        var pageData = pages[pageId];
+        String title = pageData['title'].toString().toLowerCase();
+
+        
+        if (title == trimmedWord.toLowerCase() && title.length < 2) {
+          return false;
+        }
+
+        return true;
+      }
+    } catch (e) {
+      debugPrint("Erreur Wikipedia API: $e");
+    }
+    return false;
+  }
+
+  Future<void> _finishGame() async {
+    _timer?.cancel();
+    setState(() => _isLoading = true);
+
+    int correctAnswers = 0;
+    int errors = 0;
+
+    // Check via Wikipedia
+    for (var controller in _controllers.values) {
+      bool valid = await _isValidWord(controller.text.trim());
+      if (valid) {
+        correctAnswers++;
+      } else {
+        errors++;
+      }
+    }
+
+    if (!mounted) return;
+
+    int finalScore = correctAnswers * 10;
+    int totalPossible = _controllers.length * 10;
+
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ResultScreen(
+          score: finalScore,
+          totalPossible: totalPossible,
+          correctAnswers: correctAnswers,
+          errors: errors,
+        ),
+      ),
+    );
   }
 
   void _showExitDialog() {
@@ -36,13 +132,14 @@ class _GameScreenState extends State<GameScreen> {
       context: context,
       builder: (BuildContext context) {
         return Dialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(28),
+          ),
           child: Padding(
             padding: const EdgeInsets.all(24.0),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                
                 Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
@@ -56,7 +153,6 @@ class _GameScreenState extends State<GameScreen> {
                   ),
                 ),
                 const SizedBox(height: 24),
-                // Titre
                 const Text(
                   'Quitter la partie ?',
                   style: TextStyle(
@@ -66,7 +162,6 @@ class _GameScreenState extends State<GameScreen> {
                   ),
                 ),
                 const SizedBox(height: 12),
-                // Message
                 const Text(
                   'Votre progression actuelle sera perdue.\nÊtes-vous sûr de vouloir abandonner ?',
                   textAlign: TextAlign.center,
@@ -77,7 +172,6 @@ class _GameScreenState extends State<GameScreen> {
                   ),
                 ),
                 const SizedBox(height: 32),
-                // Bouton Continuer
                 ElevatedButton(
                   onPressed: () => Navigator.pop(context),
                   style: ElevatedButton.styleFrom(
@@ -95,11 +189,10 @@ class _GameScreenState extends State<GameScreen> {
                   ),
                 ),
                 const SizedBox(height: 12),
-                // Bouton Quitter
                 TextButton(
                   onPressed: () {
-                    Navigator.pop(context); 
-                    Navigator.pop(context); 
+                    Navigator.pop(context);
+                    Navigator.pop(context);
                   },
                   style: TextButton.styleFrom(
                     minimumSize: const Size(double.infinity, 56),
@@ -134,6 +227,7 @@ class _GameScreenState extends State<GameScreen> {
   @override
   void dispose() {
     _timer?.cancel();
+    _controllers.forEach((_, controller) => controller.dispose());
     super.dispose();
   }
 
@@ -143,85 +237,168 @@ class _GameScreenState extends State<GameScreen> {
     const Color textGrey = Color(0xFF8A94A6);
 
     return PopScope(
-      canPop: false, // 
+      canPop: false,
       onPopInvokedWithResult: (didPop, result) {
         if (didPop) return;
-        _showExitDialog(); 
+        _showExitDialog();
       },
       child: Scaffold(
         backgroundColor: backgroundGrey,
-        body: SafeArea(
-          child: Column(
-            children: [
-              const SizedBox(height: 16),
-              // Header Lettre et Temps
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                child: Row(
-                  children: [
-                    _buildCircleButton(Icons.close, _showExitDialog),
-                    const Spacer(),
-                    _buildHeaderIndicator("LETTRE", widget.selectedLetter, Colors.blueAccent, Colors.white),
-                    const SizedBox(width: 12),
-                    _buildHeaderIndicator("TEMPS", _formatTime(_secondsRemaining), Colors.white, Colors.black, hasBorder: true),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 32),
-              // Titres
-              const Text(
-                "C'est parti !",
-                style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: Color(0xFF1A1D21)),
-              ),
-              const SizedBox(height: 8),
-              RichText(
-                text: TextSpan(
-                  style: const TextStyle(color: textGrey, fontSize: 15),
-                  children: [
-                    const TextSpan(text: "Trouvez des mots commençant par la lettre "),
-                    TextSpan(
-                      text: widget.selectedLetter,
-                      style: const TextStyle(color: Colors.blueAccent, fontWeight: FontWeight.bold),
+        body: Stack(
+          children: [
+            SafeArea(
+              child: Column(
+                children: [
+                  const SizedBox(height: 16),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                    child: Row(
+                      children: [
+                        _buildCircleButton(Icons.close, _showExitDialog),
+                        const Spacer(),
+                        _buildHeaderIndicator(
+                          "LETTRE",
+                          widget.selectedLetter,
+                          Colors.blueAccent,
+                          Colors.white,
+                        ),
+                        const SizedBox(width: 12),
+                        _buildHeaderIndicator(
+                          "TEMPS",
+                          _formatTime(_secondsRemaining),
+                          Colors.white,
+                          Colors.black,
+                          hasBorder: true,
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 24),
-              // Liste des categories
-              Expanded(
-                child: ListView(
-                  padding: const EdgeInsets.symmetric(horizontal: 24),
-                  children: [
-                    _buildInputGroup("PAYS", "...", Icons.public),
-                    _buildInputGroup("FRUITS", "...", Icons.restaurant),
-                    _buildInputGroup("VOITURES", "...", Icons.directions_car),
-                    _buildInputGroup("OBJET", "...", Icons.category),
-                    _buildInputGroup("PRÉNOM FILLE", "...", Icons.face_3),
-                    _buildInputGroup("PRÉNOM GARÇON", "...", Icons.face),
-                    _buildInputGroup("ANIMAL", "...", Icons.pets),
-                    const SizedBox(height: 20),
-                  ],
-                ),
-              ),
-              // Bouton STOP
-              Padding(
-                padding: const EdgeInsets.all(24.0),
-                child: ElevatedButton.icon(
-                  onPressed: () => Navigator.pop(context),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFFF4514F),
-                    foregroundColor: Colors.white,
-                    minimumSize: const Size(double.infinity, 64),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
-                    elevation: 8,
-                    shadowColor: const Color(0xFFF4514F).withOpacity(0.4),
                   ),
-                  icon: const Icon(Icons.front_hand, size: 24),
-                  label: const Text("STOP", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 32),
+                  const Text(
+                    "C'est parti !",
+                    style: TextStyle(
+                      fontSize: 28,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF1A1D21),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  RichText(
+                    text: TextSpan(
+                      style: const TextStyle(color: textGrey, fontSize: 15),
+                      children: [
+                        const TextSpan(
+                          text: "Trouvez des mots commençant par la lettre ",
+                        ),
+                        TextSpan(
+                          text: widget.selectedLetter,
+                          style: const TextStyle(
+                            color: Colors.blueAccent,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  Expanded(
+                    child: ListView(
+                      padding: const EdgeInsets.symmetric(horizontal: 24),
+                      children: [
+                        _buildInputGroup(
+                          "PAYS",
+                          "Entrez un pays...",
+                          Icons.public,
+                          _controllers["PAYS"]!,
+                        ),
+                        _buildInputGroup(
+                          "FRUITS",
+                          "Entrez un fruit...",
+                          Icons.restaurant,
+                          _controllers["FRUITS"]!,
+                        ),
+                        _buildInputGroup(
+                          "VOITURES",
+                          "Entrez une marque...",
+                          Icons.directions_car,
+                          _controllers["VOITURES"]!,
+                        ),
+                        _buildInputGroup(
+                          "OBJET",
+                          "Entrez un objet...",
+                          Icons.category,
+                          _controllers["OBJET"]!,
+                        ),
+                        _buildInputGroup(
+                          "PRÉNOM FILLE",
+                          "Entrez un prénom...",
+                          Icons.face_3,
+                          _controllers["PRÉNOM FILLE"]!,
+                        ),
+                        _buildInputGroup(
+                          "PRÉNOM GARÇON",
+                          "Entrez un prénom...",
+                          Icons.face,
+                          _controllers["PRÉNOM GARÇON"]!,
+                        ),
+                        _buildInputGroup(
+                          "ANIMAL",
+                          "Entrez un animal...",
+                          Icons.pets,
+                          _controllers["ANIMAL"]!,
+                        ),
+                        const SizedBox(height: 20),
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(24.0),
+                    child: ElevatedButton.icon(
+                      onPressed: _isLoading ? null : _finishGame,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFFF4514F),
+                        foregroundColor: Colors.white,
+                        minimumSize: const Size(double.infinity, 64),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(18),
+                        ),
+                        elevation: 8,
+                        shadowColor: const Color(0xFFF4514F).withOpacity(0.4),
+                      ),
+                      icon: const Icon(Icons.front_hand, size: 24),
+                      label: const Text(
+                        "STOP",
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            if (_isLoading)
+              Container(
+                color: Colors.black.withOpacity(0.6),
+                child: const Center(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      CircularProgressIndicator(color: Colors.white),
+                      SizedBox(height: 20),
+                      Text(
+                        "Vérification Wikipedia...",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ],
-          ),
+          ],
         ),
       ),
     );
@@ -232,47 +409,97 @@ class _GameScreenState extends State<GameScreen> {
       decoration: BoxDecoration(
         color: Colors.white,
         shape: BoxShape.circle,
-        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10)],
+        boxShadow: [
+          BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10),
+        ],
       ),
-      child: IconButton(icon: Icon(icon, color: const Color(0xFF8A94A6), size: 20), onPressed: onTap),
+      child: IconButton(
+        icon: Icon(icon, color: const Color(0xFF8A94A6), size: 20),
+        onPressed: onTap,
+      ),
     );
   }
 
-  Widget _buildHeaderIndicator(String label, String value, Color bg, Color text, {bool hasBorder = false}) {
+  Widget _buildHeaderIndicator(
+    String label,
+    String value,
+    Color bg,
+    Color text, {
+    bool hasBorder = false,
+  }) {
     return Column(
       children: [
-        Text(label, style: const TextStyle(color: Color(0xFF8A94A6), fontSize: 10, fontWeight: FontWeight.bold)),
+        Text(
+          label,
+          style: const TextStyle(
+            color: Color(0xFF8A94A6),
+            fontSize: 10,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         const SizedBox(height: 4),
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           decoration: BoxDecoration(
             color: bg,
             borderRadius: BorderRadius.circular(12),
-            border: hasBorder ? Border.all(color: Colors.black.withOpacity(0.05)) : null,
+            border: hasBorder
+                ? Border.all(color: Colors.black.withOpacity(0.05))
+                : null,
           ),
-          child: Text(value, style: TextStyle(color: text, fontWeight: FontWeight.bold, fontSize: 18)),
+          child: Text(
+            value,
+            style: TextStyle(
+              color: text,
+              fontWeight: FontWeight.bold,
+              fontSize: 18,
+            ),
+          ),
         ),
       ],
     );
   }
 
-  Widget _buildInputGroup(String label, String hint, IconData icon) {
+  Widget _buildInputGroup(
+    String label,
+    String hint,
+    IconData icon,
+    TextEditingController controller,
+  ) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(label, style: const TextStyle(color: Color(0xFF8A94A6), fontSize: 11, fontWeight: FontWeight.bold)),
+          Text(
+            label,
+            style: const TextStyle(
+              color: Color(0xFF8A94A6),
+              fontSize: 11,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
           const SizedBox(height: 8),
           TextField(
+            controller: controller,
             decoration: InputDecoration(
               hintText: hint,
               hintStyle: TextStyle(color: Colors.black.withOpacity(0.1)),
               filled: true,
               fillColor: Colors.white,
-              suffixIcon: Icon(icon, color: Colors.black.withOpacity(0.1), size: 22),
-              contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
-              border: OutlineInputBorder(borderRadius: BorderRadius.circular(15), borderSide: BorderSide.none),
+              suffixIcon: Icon(
+                icon,
+                color: Colors.black.withOpacity(0.1),
+                size: 22,
+              ),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 20,
+                vertical: 18,
+              ),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(15),
+                borderSide: BorderSide.none,
+              ),
             ),
           ),
         ],
