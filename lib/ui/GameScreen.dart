@@ -50,10 +50,10 @@ class _GameScreenState extends State<GameScreen> {
   Future<bool> _isValidWord(String word) async {
     String trimmedWord = word.trim();
 
-    
+    // Longeur du mot
     if (trimmedWord.length < 2) return false;
 
-    
+    // Premiere lettre
     if (!trimmedWord.toUpperCase().startsWith(
       widget.selectedLetter.toUpperCase(),
     )) {
@@ -61,30 +61,26 @@ class _GameScreenState extends State<GameScreen> {
     }
 
     try {
+      // list=search 
       final response = await http.get(
         Uri.parse(
-          'https://fr.wikipedia.org/w/api.php?action=query&format=json&titles=$trimmedWord&prop=info',
+          'https://fr.wikipedia.org/w/api.php?action=query&format=json&list=search&srsearch=$trimmedWord&srlimit=1',
         ),
       );
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
-        final pages = data['query']['pages'] as Map<String, dynamic>;
+        final searchResults = data['query']['search'] as List;
 
-        if (pages.containsKey("-1")) {
-          return false;
-        }
+        if (searchResults.isEmpty) return false;
 
-        var pageId = pages.keys.first;
-        var pageData = pages[pageId];
-        String title = pageData['title'].toString().toLowerCase();
+        String topResult = searchResults[0]['title'].toString().toLowerCase();
+        String inputLower = trimmedWord.toLowerCase();
 
         
-        if (title == trimmedWord.toLowerCase() && title.length < 2) {
-          return false;
+        if (topResult.contains(inputLower) || inputLower.contains(topResult)) {
+          return true;
         }
-
-        return true;
       }
     } catch (e) {
       debugPrint("Erreur Wikipedia API: $e");
@@ -99,9 +95,20 @@ class _GameScreenState extends State<GameScreen> {
     int correctAnswers = 0;
     int errors = 0;
 
+    // correction 
+    Map<String, String> finalUserAnswers = {};
+    Map<String, bool> finalValidationResults = {};
+
     // Check via Wikipedia
-    for (var controller in _controllers.values) {
-      bool valid = await _isValidWord(controller.text.trim());
+    for (var entry in _controllers.entries) {
+      String category = entry.key;
+      String text = entry.value.text.trim();
+      
+      bool valid = await _isValidWord(text);
+      
+      finalUserAnswers[category] = text;
+      finalValidationResults[category] = valid;
+
       if (valid) {
         correctAnswers++;
       } else {
@@ -122,6 +129,9 @@ class _GameScreenState extends State<GameScreen> {
           totalPossible: totalPossible,
           correctAnswers: correctAnswers,
           errors: errors,
+          selectedLetter: widget.selectedLetter,
+          userAnswers: finalUserAnswers,
+          validationResults: finalValidationResults,
         ),
       ),
     );
