@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:petit_bac/ui/ResultScreen.dart';
 
+
 class GameScreen extends StatefulWidget {
   final String selectedLetter;
 
@@ -398,7 +399,7 @@ class _GameScreenState extends State<GameScreen> {
                       CircularProgressIndicator(color: Colors.white),
                       SizedBox(height: 20),
                       Text(
-                        "Vérification Wikipedia...",
+                        "Correction en cours...",
                         style: TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
