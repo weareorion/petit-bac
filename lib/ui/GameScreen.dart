@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:petit_bac/ui/ResultScreen.dart';
+import 'package:petit_bac/utils/string_utils.dart';
 
 
 class GameScreen extends StatefulWidget {
@@ -49,14 +50,15 @@ class _GameScreenState extends State<GameScreen> {
   // --- LOGIQUE DE VALIDATION WIKIPEDIA ---
 
   Future<bool> _isValidWord(String word) async {
-    String trimmedWord = word.trim();
+    String cleanedWord = StringUtils.stripLeadingArticles(word);
 
     // Longeur du mot
-    if (trimmedWord.length < 2) return false;
+    if (cleanedWord.length < 2) return false;
 
-    // Premiere lettre
-    if (!trimmedWord.toUpperCase().startsWith(
-      widget.selectedLetter.toUpperCase(),
+    // Premiere lettre (insensible aux accents)
+    String wordWithoutAccents = StringUtils.removeAccents(cleanedWord);
+    if (!wordWithoutAccents.toUpperCase().startsWith(
+      StringUtils.removeAccents(widget.selectedLetter).toUpperCase(),
     )) {
       return false;
     }
@@ -65,7 +67,7 @@ class _GameScreenState extends State<GameScreen> {
       // list=search 
       final response = await http.get(
         Uri.parse(
-          'https://fr.wikipedia.org/w/api.php?action=query&format=json&list=search&srsearch=$trimmedWord&srlimit=1',
+          'https://fr.wikipedia.org/w/api.php?action=query&format=json&list=search&srsearch=$cleanedWord&srlimit=1',
         ),
       );
 
@@ -75,11 +77,13 @@ class _GameScreenState extends State<GameScreen> {
 
         if (searchResults.isEmpty) return false;
 
-        String topResult = searchResults[0]['title'].toString().toLowerCase();
-        String inputLower = trimmedWord.toLowerCase();
-
+        String topResult = searchResults[0]['title'].toString();
         
-        if (topResult.contains(inputLower) || inputLower.contains(topResult)) {
+        // Normalisation pour la comparaison
+        String normTop = StringUtils.normalizeForComparison(topResult);
+        String normInput = StringUtils.normalizeForComparison(cleanedWord);
+
+        if (normTop.contains(normInput) || normInput.contains(normTop)) {
           return true;
         }
       }
