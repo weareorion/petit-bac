@@ -100,12 +100,17 @@ class _GameScreenState extends State<GameScreen> {
     Map<String, String> finalUserAnswers = {};
     Map<String, bool> finalValidationResults = {};
 
-    // Check via Wikipedia
-    for (var entry in _controllers.entries) {
-      String category = entry.key;
-      String text = entry.value.text.trim();
-      
-      bool valid = await _isValidWord(text);
+    // Check via Wikipedia en parallele
+    final entries = _controllers.entries.toList();
+    final validationResultsList = await Future.wait(
+      entries.map((entry) => _isValidWord(entry.value.text)),
+    );
+
+    for (int i = 0; i < entries.length; i++) {
+      final entry = entries[i];
+      final category = entry.key;
+      final text = entry.value.text.trim();
+      final valid = validationResultsList[i];
       
       finalUserAnswers[category] = text;
       finalValidationResults[category] = valid;
