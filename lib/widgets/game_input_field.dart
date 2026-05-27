@@ -16,6 +16,9 @@ class GameInputField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
     return Padding(
       padding: const EdgeInsets.only(bottom: 20),
       child: Column(
@@ -32,14 +35,15 @@ class GameInputField extends StatelessWidget {
           const SizedBox(height: 8),
           TextField(
             controller: controller,
+            style: TextStyle(color: theme.textTheme.bodyLarge?.color, fontSize: 16),
             decoration: InputDecoration(
               hintText: hint,
-              hintStyle: TextStyle(color: Colors.black.withOpacity(0.1)),
+              hintStyle: TextStyle(color: isDark ? Colors.white30 : Colors.black26),
               filled: true,
-              fillColor: Colors.white,
+              fillColor: theme.cardColor,
               suffixIcon: Icon(
                 icon,
-                color: Colors.black.withOpacity(0.1),
+                color: isDark ? Colors.white30 : Colors.black26,
                 size: 22,
               ),
               contentPadding: const EdgeInsets.symmetric(
@@ -48,7 +52,15 @@ class GameInputField extends StatelessWidget {
               ),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(15),
-                borderSide: BorderSide.none,
+                borderSide: isDark ? BorderSide(color: Colors.white.withOpacity(0.05), width: 1) : BorderSide.none,
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(15),
+                borderSide: isDark ? BorderSide(color: Colors.white.withOpacity(0.05), width: 1) : BorderSide.none,
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(15),
+                borderSide: const BorderSide(color: Colors.blueAccent, width: 2),
               ),
             ),
           ),
@@ -57,3 +69,4 @@ class GameInputField extends StatelessWidget {
     );
   }
 }
+

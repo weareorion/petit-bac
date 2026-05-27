@@ -13,12 +13,19 @@ class CircleIconButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: theme.cardColor,
         shape: BoxShape.circle,
+        border: isDark ? Border.all(color: Colors.white.withOpacity(0.05)) : null,
         boxShadow: [
-          BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10),
+          BoxShadow(
+            color: isDark ? Colors.black.withOpacity(0.2) : Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+          ),
         ],
       ),
       child: IconButton(
@@ -48,6 +55,19 @@ class HeaderIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
+    // Si on a un fond blanc codé en dur, on le remplace par le cardColor en mode sombre
+    final resolvedBgColor = (backgroundColor == Colors.white && isDark)
+        ? theme.cardColor
+        : backgroundColor;
+
+    // Si on a un texte noir codé en dur, on l'adapte
+    final resolvedTextColor = (textColor == Colors.black && isDark)
+        ? Colors.white
+        : textColor;
+
     return Column(
       children: [
         Text(
@@ -62,16 +82,16 @@ class HeaderIndicator extends StatelessWidget {
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           decoration: BoxDecoration(
-            color: backgroundColor,
+            color: resolvedBgColor,
             borderRadius: BorderRadius.circular(12),
             border: hasBorder
-                ? Border.all(color: Colors.black.withOpacity(0.05))
+                ? Border.all(color: isDark ? Colors.white10 : Colors.black.withOpacity(0.05))
                 : null,
           ),
           child: Text(
             value,
             style: TextStyle(
-              color: textColor,
+              color: resolvedTextColor,
               fontWeight: FontWeight.bold,
               fontSize: 18,
             ),

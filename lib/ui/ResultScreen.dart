@@ -25,11 +25,13 @@ class ResultScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
     const Color primaryColor = Colors.blueAccent;
-    const Color backgroundGrey = Color(0xFFF8F9FB);
 
     return Scaffold(
-      backgroundColor: backgroundGrey,
+      backgroundColor: theme.scaffoldBackgroundColor,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24.0),
@@ -47,12 +49,12 @@ class ResultScreen extends StatelessWidget {
                     child: Container(
                       padding: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: theme.cardColor,
                         shape: BoxShape.circle,
-                        border: Border.all(color: Colors.black.withOpacity(0.05)),
+                        border: Border.all(color: isDark ? Colors.white10 : Colors.black.withOpacity(0.05)),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.05),
+                            color: isDark ? Colors.black.withOpacity(0.2) : Colors.black.withOpacity(0.05),
                             blurRadius: 10,
                           ),
                         ],
@@ -106,10 +108,10 @@ class ResultScreen extends StatelessWidget {
                           children: [
                             Text(
                               '$score',
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 64,
                                 fontWeight: FontWeight.bold,
-                                color: Color(0xFF1A1D21),
+                                color: theme.textTheme.titleLarge?.color,
                               ),
                             ),
                             Text(
@@ -135,7 +137,7 @@ class ResultScreen extends StatelessWidget {
                             label: 'CORRECT',
                             value: '$correctAnswers',
                             color: Colors.green,
-                            bgColor: const Color(0xFFE8F5E9),
+                            bgColor: isDark ? Colors.green.withOpacity(0.15) : const Color(0xFFE8F5E9),
                           ),
                         ),
                         const SizedBox(width: 16),
@@ -144,7 +146,7 @@ class ResultScreen extends StatelessWidget {
                             label: 'ERREURS',
                             value: '$errors',
                             color: Colors.red,
-                            bgColor: const Color(0xFFFFEBEE),
+                            bgColor: isDark ? Colors.red.withOpacity(0.15) : const Color(0xFFFFEBEE),
                           ),
                         ),
                       ],
@@ -154,10 +156,11 @@ class ResultScreen extends StatelessWidget {
 
                     // Bouton Voir la correction
                     _buildActionButton(
+                      context: context,
                       label: 'Voir la correction',
                       icon: Icons.assignment_turned_in_rounded,
-                      color: Colors.white,
-                      textColor: const Color(0xFF1A1D21),
+                      color: theme.cardColor,
+                      textColor: theme.textTheme.bodyLarge?.color ?? const Color(0xFF1A1D21),
                       onTap: () {
                         Navigator.push(
                           context,
@@ -177,6 +180,7 @@ class ResultScreen extends StatelessWidget {
 
                     // Bouton Rejouer
                     _buildActionButton(
+                      context: context,
                       label: 'REJOUER',
                       icon: Icons.refresh_rounded,
                       color: primaryColor,
@@ -213,7 +217,7 @@ class ResultScreen extends StatelessWidget {
           Text(
             label,
             style: TextStyle(
-              color: color.withOpacity(0.7),
+              color: color.withOpacity(0.8),
               fontSize: 12,
               fontWeight: FontWeight.bold,
             ),
@@ -233,6 +237,7 @@ class ResultScreen extends StatelessWidget {
   }
 
   Widget _buildActionButton({
+    required BuildContext context,
     required String label,
     required IconData icon,
     required Color color,
@@ -240,6 +245,9 @@ class ResultScreen extends StatelessWidget {
     required VoidCallback onTap,
     bool hasBorder = false,
   }) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -248,7 +256,7 @@ class ResultScreen extends StatelessWidget {
         decoration: BoxDecoration(
           color: color,
           borderRadius: BorderRadius.circular(20),
-          border: hasBorder ? Border.all(color: Colors.black.withOpacity(0.05)) : null,
+          border: hasBorder ? Border.all(color: isDark ? Colors.white10 : Colors.black.withOpacity(0.05)) : null,
           boxShadow: !hasBorder ? [
             BoxShadow(
               color: Colors.blueAccent.withOpacity(0.2),

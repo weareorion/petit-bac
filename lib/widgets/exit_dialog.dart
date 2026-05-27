@@ -5,9 +5,14 @@ class ExitDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
     return Dialog(
+      backgroundColor: theme.cardColor,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(28),
+        side: isDark ? BorderSide(color: Colors.white.withValues(alpha: 0.05)) : BorderSide.none,
       ),
       child: Padding(
         padding: const EdgeInsets.all(24.0),
@@ -27,12 +32,12 @@ class ExitDialog extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 24),
-            const Text(
+            Text(
               'Quitter la partie ?',
               style: TextStyle(
                 fontSize: 22,
                 fontWeight: FontWeight.bold,
-                color: Color(0xFF1A1D21),
+                color: theme.textTheme.titleLarge?.color,
               ),
             ),
             const SizedBox(height: 12),
@@ -72,7 +77,7 @@ class ExitDialog extends StatelessWidget {
                 minimumSize: const Size(double.infinity, 56),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16),
-                  side: BorderSide(color: Colors.black.withOpacity(0.05)),
+                  side: BorderSide(color: isDark ? Colors.white10 : Colors.black.withOpacity(0.05)),
                 ),
               ),
               child: const Text(
@@ -97,3 +102,4 @@ class ExitDialog extends StatelessWidget {
     );
   }
 }
+

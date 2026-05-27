@@ -50,12 +50,14 @@ class _LetterSpinState extends State<LetterSpin> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    
     const Color primaryColor = Colors.blueAccent;
-    const Color backgroundGrey = Color(0xFFF8F9FB);
     const Color textGrey = Color(0xFF8A94A6);
 
     return Scaffold(
-      backgroundColor: backgroundGrey,
+      backgroundColor: theme.scaffoldBackgroundColor,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24.0),
@@ -67,11 +69,12 @@ class _LetterSpinState extends State<LetterSpin> {
                 children: [
                   Container(
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: theme.cardColor,
                       shape: BoxShape.circle,
+                      border: isDark ? Border.all(color: Colors.white.withOpacity(0.05)) : null,
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.05),
+                          color: isDark ? Colors.black.withOpacity(0.2) : Colors.black.withOpacity(0.05),
                           blurRadius: 8,
                           offset: const Offset(0, 2),
                         ),
@@ -99,8 +102,8 @@ class _LetterSpinState extends State<LetterSpin> {
 
               Text(
                 _isSpinning ? 'C\'est parti !' : 'Lettre choisie : $_currentLetter',
-                style: const TextStyle(
-                  color: Color(0xFF1A1D21),
+                style: TextStyle(
+                  color: theme.textTheme.titleLarge?.color,
                   fontSize: 32,
                   fontWeight: FontWeight.bold,
                 ),
@@ -139,7 +142,7 @@ class _LetterSpinState extends State<LetterSpin> {
                       width: 240,
                       height: 240,
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: theme.cardColor,
                         shape: BoxShape.circle,
                         border: Border.all(color: primaryColor, width: 4),
                         boxShadow: [
@@ -179,6 +182,7 @@ class _LetterSpinState extends State<LetterSpin> {
               // Boutons d'action dynamiques
               if (_isSpinning)
                 _buildActionButton(
+                  context: context,
                   label: 'Arrêter',
                   icon: Icons.stop_circle_outlined,
                   color: primaryColor,
@@ -187,12 +191,12 @@ class _LetterSpinState extends State<LetterSpin> {
                 )
               else ...[
                 _buildActionButton(
+                  context: context,
                   label: 'Commencer la partie',
                   icon: Icons.play_arrow_rounded,
                   color: primaryColor,
                   textColor: Colors.white,
                   onTap: () {
-                    
                     Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -203,9 +207,10 @@ class _LetterSpinState extends State<LetterSpin> {
                 ),
                 const SizedBox(height: 12),
                 _buildActionButton(
+                  context: context,
                   label: 'Relancer la roue',
                   icon: Icons.refresh_rounded,
-                  color: Colors.white,
+                  color: theme.cardColor,
                   textColor: primaryColor,
                   onTap: _startSpinning,
                   hasBorder: true,
@@ -239,6 +244,7 @@ class _LetterSpinState extends State<LetterSpin> {
   }
 
   Widget _buildActionButton({
+    required BuildContext context,
     required String label,
     required IconData icon,
     required Color color,
@@ -246,6 +252,9 @@ class _LetterSpinState extends State<LetterSpin> {
     required VoidCallback onTap,
     bool hasBorder = false,
   }) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -254,7 +263,9 @@ class _LetterSpinState extends State<LetterSpin> {
         decoration: BoxDecoration(
           color: color,
           borderRadius: BorderRadius.circular(16),
-          border: hasBorder ? Border.all(color: Colors.blueAccent, width: 2) : null,
+          border: hasBorder 
+              ? Border.all(color: isDark ? Colors.white24 : Colors.blueAccent, width: 2) 
+              : null,
           boxShadow: !hasBorder ? [
             BoxShadow(
               color: Colors.blueAccent.withOpacity(0.3),

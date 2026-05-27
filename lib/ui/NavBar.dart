@@ -9,19 +9,36 @@ class NavBar extends StatelessWidget {
     if (index == currentIndex) return;
 
     final List<String> routes = ['/', '/scores', '/profile', '/settings'];
+    
+    // Pour l'instant, seuls '/' et '/settings' sont configurés dans les routes principales de l'app.
+    // Pour éviter tout plantage si l'utilisateur clique sur profil ou scores :
+    if (routes[index] == '/scores' || routes[index] == '/profile') {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Cette section sera bientôt disponible !"),
+          duration: Duration(seconds: 1),
+        ),
+      );
+      return;
+    }
+    
     Navigator.pushReplacementNamed(context, routes[index]);
   }
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
     return Container(
       margin: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: theme.cardColor,
         borderRadius: BorderRadius.circular(40),
+        border: isDark ? Border.all(color: Colors.white.withOpacity(0.08), width: 1) : null,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: isDark ? Colors.black.withOpacity(0.3) : Colors.black.withOpacity(0.05),
             blurRadius: 10,
             offset: const Offset(0, -2),
           ),
@@ -33,9 +50,9 @@ class NavBar extends StatelessWidget {
           elevation: 0,
           backgroundColor: Colors.transparent,
           selectedItemColor: Colors.blueAccent,
-          unselectedItemColor: Colors.grey,
+          unselectedItemColor: isDark ? Colors.white38 : Colors.grey,
           type: BottomNavigationBarType.fixed,
-          showSelectedLabels: false, // Optionnel : pour un look plus épuré
+          showSelectedLabels: false,
           showUnselectedLabels: false,
           currentIndex: currentIndex,
           onTap: (index) => _onItemTapped(context, index),

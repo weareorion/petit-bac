@@ -120,7 +120,9 @@ class _GameScreenState extends State<GameScreen> {
 
   @override
   Widget build(BuildContext context) {
-    const Color backgroundGrey = Color(0xFFF8F9FB);
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
     const Color textGrey = Color(0xFF8A94A6);
 
     return PopScope(
@@ -130,7 +132,7 @@ class _GameScreenState extends State<GameScreen> {
         _showExitDialog();
       },
       child: Scaffold(
-        backgroundColor: backgroundGrey,
+        backgroundColor: theme.scaffoldBackgroundColor,
         body: LoadingOverlay(
           isLoading: _isLoading,
           child: SafeArea(
@@ -156,20 +158,20 @@ class _GameScreenState extends State<GameScreen> {
                       HeaderIndicator(
                         label: "TEMPS",
                         value: _formatTime(_secondsRemaining),
-                        backgroundColor: Colors.white,
-                        textColor: Colors.black,
+                        backgroundColor: isDark ? theme.cardColor : Colors.white,
+                        textColor: isDark ? Colors.white : Colors.black,
                         hasBorder: true,
                       ),
                     ],
                   ),
                 ),
                 const SizedBox(height: 32),
-                const Text(
+                Text(
                   "C'est parti !",
                   style: TextStyle(
                     fontSize: 28,
                     fontWeight: FontWeight.bold,
-                    color: Color(0xFF1A1D21),
+                    color: theme.textTheme.titleLarge?.color,
                   ),
                 ),
                 const SizedBox(height: 8),
