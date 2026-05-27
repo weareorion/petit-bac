@@ -193,17 +193,6 @@ class Settings extends StatelessWidget {
                   Divider(height: 1, color: isDark ? Colors.white10 : Colors.black.withOpacity(0.05)),
                   _buildSettingRow(
                     context: context,
-                    icon: Icons.vibration,
-                    title: 'Haptique',
-                    trailing: Switch(
-                      value: settingsService.hapticsEnabled,
-                      onChanged: (val) => settingsService.toggleHaptics(val),
-                      activeColor: Colors.blueAccent,
-                    ),
-                  ),
-                  Divider(height: 1, color: isDark ? Colors.white10 : Colors.black.withOpacity(0.05)),
-                  _buildSettingRow(
-                    context: context,
                     icon: Icons.dark_mode_outlined,
                     title: 'Mode sombre',
                     trailing: Switch(
