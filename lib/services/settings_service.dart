@@ -9,7 +9,7 @@ class SettingsService extends ChangeNotifier {
   late SharedPreferences _prefs;
   bool _isInitialized = false;
 
-  // Valeurs par défaut
+  // Valeurs par defaut
   bool _isDarkMode = false;
   bool _soundsEnabled = true;
   bool _hapticsEnabled = true;
@@ -26,6 +26,51 @@ class SettingsService extends ChangeNotifier {
   String get username => _username;
   int get userXp => _userXp;
   int get userLevel => _userLevel;
+
+  // Themes de l'application
+  ThemeData get lightTheme => ThemeData(
+        useMaterial3: true,
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Colors.blueAccent,
+          brightness: Brightness.light,
+          background: const Color(0xFFF8F9FE),
+          surface: Colors.white,
+        ),
+        scaffoldBackgroundColor: const Color(0xFFF8F9FE),
+        cardColor: Colors.white,
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          iconTheme: IconThemeData(color: Colors.black),
+          titleTextStyle: TextStyle(
+            color: Colors.black,
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      );
+
+  ThemeData get darkTheme => ThemeData(
+        useMaterial3: true,
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Colors.blueAccent,
+          brightness: Brightness.dark,
+          background: const Color(0xFF0F172A),
+          surface: const Color(0xFF1E293B),
+        ),
+        scaffoldBackgroundColor: const Color(0xFF0F172A),
+        cardColor: const Color(0xFF1E293B),
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          iconTheme: IconThemeData(color: Colors.white),
+          titleTextStyle: TextStyle(
+            color: Colors.white,
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      );
 
   // Initialisation
   Future<void> init() async {

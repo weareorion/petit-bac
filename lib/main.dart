@@ -29,53 +29,11 @@ class MyApp extends StatelessWidget {
           debugShowCheckedModeBanner: false,
           title: 'Petit Bac',
           
-          // Thème Clair
-          theme: ThemeData(
-            useMaterial3: true,
-            colorScheme: ColorScheme.fromSeed(
-              seedColor: Colors.blueAccent,
-              brightness: Brightness.light,
-              background: const Color(0xFFF8F9FE),
-              surface: Colors.white,
-            ),
-            scaffoldBackgroundColor: const Color(0xFFF8F9FE),
-            cardColor: Colors.white,
-            appBarTheme: const AppBarTheme(
-              backgroundColor: Colors.transparent,
-              elevation: 0,
-              iconTheme: IconThemeData(color: Colors.black),
-              titleTextStyle: TextStyle(
-                color: Colors.black,
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
+          // Themes de l'application
+          theme: settingsService.lightTheme,
+          darkTheme: settingsService.darkTheme,
 
-          // Thème Sombre (Premium)
-          darkTheme: ThemeData(
-            useMaterial3: true,
-            colorScheme: ColorScheme.fromSeed(
-              seedColor: Colors.blueAccent,
-              brightness: Brightness.dark,
-              background: const Color(0xFF0F172A),
-              surface: const Color(0xFF1E293B),
-            ),
-            scaffoldBackgroundColor: const Color(0xFF0F172A),
-            cardColor: const Color(0xFF1E293B),
-            appBarTheme: const AppBarTheme(
-              backgroundColor: Colors.transparent,
-              elevation: 0,
-              iconTheme: IconThemeData(color: Colors.white),
-              titleTextStyle: TextStyle(
-                color: Colors.white,
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-
-          // Mode Thème Actuel
+          // Mode Theme Actuel
           themeMode: settingsService.isDarkMode ? ThemeMode.dark : ThemeMode.light,
 
           routes: {
