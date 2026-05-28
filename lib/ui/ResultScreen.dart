@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:petit_bac/ui/CorrectionScreen.dart';
+import 'package:petit_bac/widgets/action_button.dart';
 
 class ResultScreen extends StatelessWidget {
   final int score;
@@ -155,8 +156,7 @@ class ResultScreen extends StatelessWidget {
                     const SizedBox(height: 40),
 
                     // Bouton Voir la correction
-                    _buildActionButton(
-                      context: context,
+                    ActionButton(
                       label: 'Voir la correction',
                       icon: Icons.assignment_turned_in_rounded,
                       color: theme.cardColor,
@@ -174,13 +174,13 @@ class ResultScreen extends StatelessWidget {
                         );
                       },
                       hasBorder: true,
+                      iconColor: Colors.blueAccent,
                     ),
 
                     const SizedBox(height: 16),
 
                     // Bouton Rejouer
-                    _buildActionButton(
-                      context: context,
+                    ActionButton(
                       label: 'REJOUER',
                       icon: Icons.refresh_rounded,
                       color: primaryColor,
@@ -232,54 +232,6 @@ class ResultScreen extends StatelessWidget {
             ),
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildActionButton({
-    required BuildContext context,
-    required String label,
-    required IconData icon,
-    required Color color,
-    required Color textColor,
-    required VoidCallback onTap,
-    bool hasBorder = false,
-  }) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
-
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        width: double.infinity,
-        height: 64,
-        decoration: BoxDecoration(
-          color: color,
-          borderRadius: BorderRadius.circular(20),
-          border: hasBorder ? Border.all(color: isDark ? Colors.white10 : Colors.black.withOpacity(0.05)) : null,
-          boxShadow: !hasBorder ? [
-            BoxShadow(
-              color: Colors.blueAccent.withOpacity(0.2),
-              blurRadius: 15,
-              offset: const Offset(0, 8),
-            ),
-          ] : null,
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(icon, color: hasBorder ? Colors.blueAccent : textColor, size: 24),
-            const SizedBox(width: 12),
-            Text(
-              label,
-              style: TextStyle(
-                color: textColor,
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
-        ),
       ),
     );
   }

@@ -1,6 +1,9 @@
 import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:petit_bac/widgets/action_button.dart';
+import 'package:petit_bac/widgets/game_header.dart';
+import 'package:petit_bac/widgets/letter_wheel.dart';
 import 'GameScreen.dart';
 
 class LetterSpin extends StatefulWidget {
@@ -67,23 +70,9 @@ class _LetterSpinState extends State<LetterSpin> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Container(
-                    decoration: BoxDecoration(
-                      color: theme.cardColor,
-                      shape: BoxShape.circle,
-                      border: isDark ? Border.all(color: Colors.white.withOpacity(0.05)) : null,
-                      boxShadow: [
-                        BoxShadow(
-                          color: isDark ? Colors.black.withOpacity(0.2) : Colors.black.withOpacity(0.05),
-                          blurRadius: 8,
-                          offset: const Offset(0, 2),
-                        ),
-                      ],
-                    ),
-                    child: IconButton(
-                      icon: const Icon(Icons.arrow_back_ios_new_rounded, color: textGrey, size: 20),
-                      onPressed: () => Navigator.of(context).pop(),
-                    ),
+                  CircleIconButton(
+                    icon: Icons.arrow_back_ios_new_rounded,
+                    onTap: () => Navigator.of(context).pop(),
                   ),
                   const Text(
                     'PETIT BAC',
@@ -124,74 +113,26 @@ class _LetterSpinState extends State<LetterSpin> {
               const Spacer(flex: 3),
 
               Center(
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    Container(
-                      width: 280,
-                      height: 280,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        border: Border.all(
-                          color: primaryColor.withOpacity(0.2),
-                          width: 1,
-                        ),
-                      ),
-                    ),
-                    Container(
-                      width: 240,
-                      height: 240,
-                      decoration: BoxDecoration(
-                        color: theme.cardColor,
-                        shape: BoxShape.circle,
-                        border: Border.all(color: primaryColor, width: 4),
-                        boxShadow: [
-                          BoxShadow(
-                            color: primaryColor.withOpacity(0.1),
-                            blurRadius: 20,
-                            spreadRadius: 5,
-                          ),
-                        ],
-                      ),
-                    ),
-                    Positioned(
-                      top: 20,
-                      child: Container(
-                        width: 12,
-                        height: 12,
-                        decoration: const BoxDecoration(
-                          color: primaryColor,
-                          shape: BoxShape.circle,
-                        ),
-                      ),
-                    ),
-                    Text(
-                      _currentLetter,
-                      style: const TextStyle(
-                        color: primaryColor,
-                        fontSize: 140,
-                        fontWeight: FontWeight.w900,
-                      ),
-                    ),
-                  ],
-                ),
+                child: LetterWheel(letter: _currentLetter),
               ),
 
               const Spacer(flex: 4),
 
               // Boutons d'action dynamiques
               if (_isSpinning)
-                _buildActionButton(
-                  context: context,
+                ActionButton(
                   label: 'Arrêter',
                   icon: Icons.stop_circle_outlined,
                   color: primaryColor,
                   textColor: Colors.white,
                   onTap: _stopSpinning,
+                  borderRadius: 16,
+                  iconSize: 28,
+                  fontSize: 20,
+                  shadowOpacity: 0.3,
                 )
               else ...[
-                _buildActionButton(
-                  context: context,
+                ActionButton(
                   label: 'Commencer la partie',
                   icon: Icons.play_arrow_rounded,
                   color: primaryColor,
@@ -204,16 +145,24 @@ class _LetterSpinState extends State<LetterSpin> {
                       ),
                     );
                   },
+                  borderRadius: 16,
+                  iconSize: 28,
+                  fontSize: 20,
+                  shadowOpacity: 0.3,
                 ),
                 const SizedBox(height: 12),
-                _buildActionButton(
-                  context: context,
+                ActionButton(
                   label: 'Relancer la roue',
                   icon: Icons.refresh_rounded,
                   color: theme.cardColor,
                   textColor: primaryColor,
                   onTap: _startSpinning,
                   hasBorder: true,
+                  borderRadius: 16,
+                  iconSize: 28,
+                  fontSize: 20,
+                  shadowOpacity: 0.3,
+                  customBorder: Border.all(color: isDark ? Colors.white24 : Colors.blueAccent, width: 2),
                 ),
               ],
 
@@ -238,56 +187,6 @@ class _LetterSpinState extends State<LetterSpin> {
               const SizedBox(height: 16),
             ],
           ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildActionButton({
-    required BuildContext context,
-    required String label,
-    required IconData icon,
-    required Color color,
-    required Color textColor,
-    required VoidCallback onTap,
-    bool hasBorder = false,
-  }) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
-
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        width: double.infinity,
-        height: 64,
-        decoration: BoxDecoration(
-          color: color,
-          borderRadius: BorderRadius.circular(16),
-          border: hasBorder 
-              ? Border.all(color: isDark ? Colors.white24 : Colors.blueAccent, width: 2) 
-              : null,
-          boxShadow: !hasBorder ? [
-            BoxShadow(
-              color: Colors.blueAccent.withOpacity(0.3),
-              blurRadius: 15,
-              offset: const Offset(0, 8),
-            ),
-          ] : null,
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(icon, color: textColor, size: 28),
-            const SizedBox(width: 12),
-            Text(
-              label,
-              style: TextStyle(
-                color: textColor,
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
         ),
       ),
     );
