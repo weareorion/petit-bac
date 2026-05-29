@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:petit_bac/ui/LetterGenerator.dart';
-import './NavBar.dart'; 
+import 'package:petit_bac/ui/letter_generator.dart';
+import 'package:petit_bac/ui/nav_bar.dart'; 
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});

@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:petit_bac/services/wikipedia_service.dart';
-import 'package:petit_bac/ui/ResultScreen.dart';
+import 'package:petit_bac/ui/result_screen.dart';
 import 'package:petit_bac/widgets/exit_dialog.dart';
 import 'package:petit_bac/widgets/game_header.dart';
 import 'package:petit_bac/widgets/game_input_field.dart';

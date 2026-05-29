@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:petit_bac/services/settings_service.dart';
-import 'package:petit_bac/ui/GameScreen.dart';
-import 'package:petit_bac/ui/HomeScreen.dart';
-import 'package:petit_bac/ui/LetterGenerator.dart';
-import 'package:petit_bac/ui/Settings.dart';
+import 'package:petit_bac/ui/game_screen.dart';
+import 'package:petit_bac/ui/home_screen.dart';
+import 'package:petit_bac/ui/letter_generator.dart';
+import 'package:petit_bac/ui/settings_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

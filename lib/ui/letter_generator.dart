@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:petit_bac/widgets/action_button.dart';
 import 'package:petit_bac/widgets/game_header.dart';
 import 'package:petit_bac/widgets/letter_wheel.dart';
-import 'GameScreen.dart';
+import 'package:petit_bac/ui/game_screen.dart';
 
 class LetterSpin extends StatefulWidget {
   const LetterSpin({super.key});

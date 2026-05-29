@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:petit_bac/ui/CorrectionScreen.dart';
+import 'package:petit_bac/ui/correction_screen.dart';
 import 'package:petit_bac/widgets/action_button.dart';
 
 class ResultScreen extends StatelessWidget {

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../services/settings_service.dart';
-import './NavBar.dart';
+import 'package:petit_bac/services/settings_service.dart';
+import 'package:petit_bac/ui/nav_bar.dart';
 
 class Settings extends StatelessWidget {
   const Settings({super.key});
