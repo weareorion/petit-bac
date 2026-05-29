@@ -1,5 +1,8 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:petit_bac/core/constants/app_colors.dart';
+import 'package:petit_bac/core/constants/app_spacing.dart';
+import 'package:petit_bac/core/constants/app_text_styles.dart';
 import 'package:petit_bac/services/wikipedia_service.dart';
 import 'package:petit_bac/ui/result_screen.dart';
 import 'package:petit_bac/widgets/exit_dialog.dart';
@@ -123,8 +126,6 @@ class _GameScreenState extends State<GameScreen> {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
 
-    const Color textGrey = Color(0xFF8A94A6);
-
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, result) {
@@ -138,9 +139,9 @@ class _GameScreenState extends State<GameScreen> {
           child: SafeArea(
             child: Column(
               children: [
-                const SizedBox(height: 16),
+                const SizedBox(height: AppSpacing.md),
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                  padding: const EdgeInsets.symmetric(horizontal: AppSpacing.screenHorizontal),
                   child: Row(
                     children: [
                       CircleIconButton(
@@ -165,7 +166,7 @@ class _GameScreenState extends State<GameScreen> {
                     ],
                   ),
                 ),
-                const SizedBox(height: 32),
+                const SizedBox(height: AppSpacing.xxl),
                 Text(
                   "C'est parti !",
                   style: TextStyle(
@@ -174,10 +175,10 @@ class _GameScreenState extends State<GameScreen> {
                     color: theme.textTheme.titleLarge?.color,
                   ),
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: AppSpacing.sm),
                 RichText(
                   text: TextSpan(
-                    style: const TextStyle(color: textGrey, fontSize: 15),
+                    style: AppTextStyles.subtitle,
                     children: [
                       const TextSpan(
                         text: "Trouvez des mots commençant par la lettre ",
@@ -192,10 +193,10 @@ class _GameScreenState extends State<GameScreen> {
                     ],
                   ),
                 ),
-                const SizedBox(height: 24),
+                const SizedBox(height: AppSpacing.screenHorizontal),
                 Expanded(
                   child: ListView(
-                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    padding: const EdgeInsets.symmetric(horizontal: AppSpacing.screenHorizontal),
                     children: [
                       GameInputField(
                         label: "PAYS",
@@ -239,23 +240,23 @@ class _GameScreenState extends State<GameScreen> {
                         icon: Icons.pets,
                         controller: _controllers["ANIMAL"]!,
                       ),
-                      const SizedBox(height: 20),
+                      const SizedBox(height: AppSpacing.lg),
                     ],
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.all(24.0),
+                  padding: const EdgeInsets.all(AppSpacing.screenHorizontal),
                   child: ElevatedButton.icon(
                     onPressed: _isLoading ? null : _finishGame,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFFF4514F),
+                      backgroundColor: AppColors.danger,
                       foregroundColor: Colors.white,
                       minimumSize: const Size(double.infinity, 64),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(18),
+                        borderRadius: BorderRadius.circular(AppSpacing.stopButtonRadius),
                       ),
                       elevation: 8,
-                      shadowColor: const Color(0xFFF4514F).withOpacity(0.4),
+                      shadowColor: AppColors.danger.withOpacity(0.4),
                     ),
                     icon: const Icon(Icons.front_hand, size: 24),
                     label: const Text(

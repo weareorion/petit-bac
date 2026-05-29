@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:petit_bac/core/constants/route_names.dart';
 import 'package:petit_bac/services/settings_service.dart';
 import 'package:petit_bac/ui/nav_bar.dart';
 
@@ -162,7 +163,7 @@ class Settings extends StatelessWidget {
             elevation: 0,
             leading: IconButton(
               icon: const Icon(Icons.arrow_back_ios, color: Colors.blueAccent),
-              onPressed: () => Navigator.popAndPushNamed(context, '/'),
+              onPressed: () => Navigator.popAndPushNamed(context, RouteNames.home),
             ),
             title: Text(
               'Réglages',

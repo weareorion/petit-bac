@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:petit_bac/core/constants/route_names.dart';
 import 'package:petit_bac/services/settings_service.dart';
 import 'package:petit_bac/ui/game_screen.dart';
 import 'package:petit_bac/ui/home_screen.dart';
@@ -37,10 +38,10 @@ class MyApp extends StatelessWidget {
           themeMode: settingsService.isDarkMode ? ThemeMode.dark : ThemeMode.light,
 
           routes: {
-            '/': (context) => const HomeScreen(),
-            '/settings': (context) => const Settings(),
-            '/letter': (context) => const LetterSpin(),
-            '/play': (context) {
+            RouteNames.home: (context) => const HomeScreen(),
+            RouteNames.settings: (context) => const Settings(),
+            RouteNames.letter: (context) => const LetterSpin(),
+            RouteNames.play: (context) {
               final String letter = ModalRoute.of(context)!.settings.arguments as String;
               return GameScreen(selectedLetter: letter);
             },

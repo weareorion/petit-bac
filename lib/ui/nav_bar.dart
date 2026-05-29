@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:petit_bac/core/constants/app_spacing.dart';
+import 'package:petit_bac/core/constants/route_names.dart';
 
 class NavBar extends StatelessWidget {
   final int currentIndex;
@@ -8,11 +10,16 @@ class NavBar extends StatelessWidget {
   void _onItemTapped(BuildContext context, int index) {
     if (index == currentIndex) return;
 
-    final List<String> routes = ['/', '/scores', '/profile', '/settings'];
-    
-    // Pour l'instant, seuls '/' et '/settings' sont configurés dans les routes principales de l'app.
+    final List<String> routes = [
+      RouteNames.home,
+      RouteNames.scores,
+      RouteNames.profile,
+      RouteNames.settings,
+    ];
+
+    // Pour l'instant, seuls home et settings sont configurés dans les routes principales de l'app.
     // Pour éviter tout plantage si l'utilisateur clique sur profil ou scores :
-    if (routes[index] == '/scores' || routes[index] == '/profile') {
+    if (routes[index] == RouteNames.scores || routes[index] == RouteNames.profile) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text("Cette section sera bientôt disponible !"),
@@ -31,10 +38,10 @@ class NavBar extends StatelessWidget {
     final isDark = theme.brightness == Brightness.dark;
 
     return Container(
-      margin: const EdgeInsets.all(20),
+      margin: const EdgeInsets.all(AppSpacing.navMargin),
       decoration: BoxDecoration(
         color: theme.cardColor,
-        borderRadius: BorderRadius.circular(40),
+        borderRadius: BorderRadius.circular(AppSpacing.navBarRadius),
         border: isDark ? Border.all(color: Colors.white.withOpacity(0.08), width: 1) : null,
         boxShadow: [
           BoxShadow(
@@ -45,7 +52,7 @@ class NavBar extends StatelessWidget {
         ],
       ),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(40),
+        borderRadius: BorderRadius.circular(AppSpacing.navBarRadius),
         child: BottomNavigationBar(
           elevation: 0,
           backgroundColor: Colors.transparent,

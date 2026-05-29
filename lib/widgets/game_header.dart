@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:petit_bac/core/constants/app_colors.dart';
+import 'package:petit_bac/core/constants/app_spacing.dart';
+import 'package:petit_bac/core/constants/app_text_styles.dart';
 
 
 class CircleIconButton extends StatelessWidget {
@@ -29,7 +32,7 @@ class CircleIconButton extends StatelessWidget {
         ],
       ),
       child: IconButton(
-        icon: Icon(icon, color: const Color(0xFF8A94A6), size: 20),
+        icon: Icon(icon, color: AppColors.textGrey, size: 20),
         onPressed: onTap,
       ),
     );
@@ -72,18 +75,14 @@ class HeaderIndicator extends StatelessWidget {
       children: [
         Text(
           label,
-          style: const TextStyle(
-            color: Color(0xFF8A94A6),
-            fontSize: 10,
-            fontWeight: FontWeight.bold,
-          ),
+          style: AppTextStyles.headerLabel,
         ),
-        const SizedBox(height: 4),
+        const SizedBox(height: AppSpacing.xs),
         Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.sm),
           decoration: BoxDecoration(
             color: resolvedBgColor,
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(AppSpacing.cardRadius),
             border: hasBorder
                 ? Border.all(color: isDark ? Colors.white10 : Colors.black.withOpacity(0.05))
                 : null,

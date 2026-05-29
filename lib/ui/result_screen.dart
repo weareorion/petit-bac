@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:petit_bac/core/constants/app_colors.dart';
+import 'package:petit_bac/core/constants/app_spacing.dart';
+import 'package:petit_bac/core/constants/route_names.dart';
 import 'package:petit_bac/ui/correction_screen.dart';
 import 'package:petit_bac/widgets/action_button.dart';
 
@@ -35,7 +38,7 @@ class ResultScreen extends StatelessWidget {
       backgroundColor: theme.scaffoldBackgroundColor,
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0),
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.screenHorizontal),
           child: Column(
             children: [
               // Bouton Exit
@@ -45,7 +48,7 @@ class ResultScreen extends StatelessWidget {
                   padding: const EdgeInsets.only(top: 16.0),
                   child: GestureDetector(
                     onTap: () {
-                      Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
+                      Navigator.pushNamedAndRemoveUntil(context, RouteNames.home, (route) => false);
                     },
                     child: Container(
                       padding: const EdgeInsets.all(10),
@@ -85,7 +88,7 @@ class ResultScreen extends StatelessWidget {
                       height: 4,
                       decoration: BoxDecoration(
                         color: primaryColor.withOpacity(0.2),
-                        borderRadius: BorderRadius.circular(2),
+                        borderRadius: BorderRadius.circular(AppSpacing.radiusXs),
                       ),
                     ),
                     const SizedBox(height: 40),
@@ -138,7 +141,7 @@ class ResultScreen extends StatelessWidget {
                             label: 'CORRECT',
                             value: '$correctAnswers',
                             color: Colors.green,
-                            bgColor: isDark ? Colors.green.withOpacity(0.15) : const Color(0xFFE8F5E9),
+                            bgColor: isDark ? Colors.green.withOpacity(0.15) : AppColors.successBgLight,
                           ),
                         ),
                         const SizedBox(width: 16),
@@ -147,7 +150,7 @@ class ResultScreen extends StatelessWidget {
                             label: 'ERREURS',
                             value: '$errors',
                             color: Colors.red,
-                            bgColor: isDark ? Colors.red.withOpacity(0.15) : const Color(0xFFFFEBEE),
+                            bgColor: isDark ? Colors.red.withOpacity(0.15) : AppColors.errorBgLight,
                           ),
                         ),
                       ],
@@ -160,7 +163,7 @@ class ResultScreen extends StatelessWidget {
                       label: 'Voir la correction',
                       icon: Icons.assignment_turned_in_rounded,
                       color: theme.cardColor,
-                      textColor: theme.textTheme.bodyLarge?.color ?? const Color(0xFF1A1D21),
+                      textColor: theme.textTheme.bodyLarge?.color ?? AppColors.bodyDark,
                       onTap: () {
                         Navigator.push(
                           context,
@@ -186,7 +189,7 @@ class ResultScreen extends StatelessWidget {
                       color: primaryColor,
                       textColor: Colors.white,
                       onTap: () {
-                        Navigator.pushNamedAndRemoveUntil(context, '/letter', (route) => false);
+                        Navigator.pushNamedAndRemoveUntil(context, RouteNames.letter, (route) => false);
                       },
                     ),
                   ],
@@ -206,10 +209,10 @@ class ResultScreen extends StatelessWidget {
     required Color bgColor,
   }) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(AppSpacing.navMargin),
       decoration: BoxDecoration(
         color: bgColor,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(AppSpacing.dialogRadius),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

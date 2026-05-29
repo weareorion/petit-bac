@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:petit_bac/core/constants/app_colors.dart';
+import 'package:petit_bac/core/constants/app_spacing.dart';
 import 'package:petit_bac/widgets/action_button.dart';
 import 'package:petit_bac/widgets/game_header.dart';
 import 'package:petit_bac/widgets/letter_wheel.dart';
@@ -57,13 +59,12 @@ class _LetterSpinState extends State<LetterSpin> {
     final isDark = theme.brightness == Brightness.dark;
     
     const Color primaryColor = Colors.blueAccent;
-    const Color textGrey = Color(0xFF8A94A6);
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0),
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.screenHorizontal),
           child: Column(
             children: [
               const SizedBox(height: 16),
@@ -77,7 +78,7 @@ class _LetterSpinState extends State<LetterSpin> {
                   const Text(
                     'PETIT BAC',
                     style: TextStyle(
-                      color: textGrey,
+                      color: AppColors.textGrey,
                       letterSpacing: 1.5,
                       fontWeight: FontWeight.w600,
                       fontSize: 13,
@@ -104,7 +105,7 @@ class _LetterSpinState extends State<LetterSpin> {
                   : 'Voulez-vous jouer avec cette lettre ?',
                 textAlign: TextAlign.center,
                 style: const TextStyle(
-                  color: textGrey,
+                  color: AppColors.textGrey,
                   fontSize: 16,
                   height: 1.4,
                 ),
@@ -171,12 +172,12 @@ class _LetterSpinState extends State<LetterSpin> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.info_outline_rounded, color: textGrey.withOpacity(0.7), size: 18),
-                  const SizedBox(width: 8),
+                  Icon(Icons.info_outline_rounded, color: AppColors.textGrey.withOpacity(0.7), size: 18),
+                  const SizedBox(width: AppSpacing.sm),
                   Text(
                     'GÉNÉRATEUR ALÉATOIRE',
                     style: TextStyle(
-                      color: textGrey.withOpacity(0.7),
+                      color: AppColors.textGrey.withOpacity(0.7),
                       letterSpacing: 1.0,
                       fontWeight: FontWeight.w500,
                       fontSize: 12,

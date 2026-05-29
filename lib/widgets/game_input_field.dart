@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:petit_bac/core/constants/app_spacing.dart';
+import 'package:petit_bac/core/constants/app_text_styles.dart';
 
 class GameInputField extends StatelessWidget {
   final String label;
@@ -20,19 +22,15 @@ class GameInputField extends StatelessWidget {
     final isDark = theme.brightness == Brightness.dark;
 
     return Padding(
-      padding: const EdgeInsets.only(bottom: 20),
+      padding: const EdgeInsets.only(bottom: AppSpacing.inputFieldBottom),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             label,
-            style: const TextStyle(
-              color: Color(0xFF8A94A6),
-              fontSize: 11,
-              fontWeight: FontWeight.bold,
-            ),
+            style: AppTextStyles.cardLabel,
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: AppSpacing.sm),
           TextField(
             controller: controller,
             style: TextStyle(color: theme.textTheme.bodyLarge?.color, fontSize: 16),
@@ -47,19 +45,19 @@ class GameInputField extends StatelessWidget {
                 size: 22,
               ),
               contentPadding: const EdgeInsets.symmetric(
-                horizontal: 20,
+                horizontal: AppSpacing.lg,
                 vertical: 18,
               ),
               border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(15),
+                borderRadius: BorderRadius.circular(AppSpacing.inputRadius),
                 borderSide: isDark ? BorderSide(color: Colors.white.withOpacity(0.05), width: 1) : BorderSide.none,
               ),
               enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(15),
+                borderRadius: BorderRadius.circular(AppSpacing.inputRadius),
                 borderSide: isDark ? BorderSide(color: Colors.white.withOpacity(0.05), width: 1) : BorderSide.none,
               ),
               focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(15),
+                borderRadius: BorderRadius.circular(AppSpacing.inputRadius),
                 borderSide: const BorderSide(color: Colors.blueAccent, width: 2),
               ),
             ),

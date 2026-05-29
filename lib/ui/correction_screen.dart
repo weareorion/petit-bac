@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:petit_bac/core/constants/app_colors.dart';
+import 'package:petit_bac/core/constants/app_spacing.dart';
+import 'package:petit_bac/core/constants/app_text_styles.dart';
+import 'package:petit_bac/core/constants/route_names.dart';
 
 class CorrectionScreen extends StatelessWidget {
   final String selectedLetter;
@@ -16,10 +20,6 @@ class CorrectionScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
-
-    const Color successGreen = Color(0xFF4CAF50);
-    const Color errorRed = Color(0xFFF44336);
-    const Color primaryPurple = Color(0xFF7C4DFF);
 
     int totalScore = validationResults.values.where((v) => v).length * 10;
 
@@ -42,33 +42,33 @@ class CorrectionScreen extends StatelessWidget {
         children: [
           // Header Score
           Container(
-            margin: const EdgeInsets.all(20),
-            padding: const EdgeInsets.all(24),
+            margin: const EdgeInsets.all(AppSpacing.navMargin),
+            padding: const EdgeInsets.all(AppSpacing.screenHorizontal),
             decoration: BoxDecoration(
-              color: primaryPurple.withOpacity(isDark ? 0.15 : 0.1),
-              borderRadius: BorderRadius.circular(24),
+              color: AppColors.primaryPurple.withOpacity(isDark ? 0.15 : 0.1),
+              borderRadius: BorderRadius.circular(AppSpacing.cardRadiusLg),
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                _buildHeaderStat("Lettre choisie", selectedLetter, primaryPurple),
-                _buildHeaderStat("Score final", "$totalScore/70", primaryPurple),
+                _buildHeaderStat("Lettre choisie", selectedLetter, AppColors.primaryPurple),
+                _buildHeaderStat("Score final", "$totalScore/70", AppColors.primaryPurple),
               ],
             ),
           ),
 
           Expanded(
             child: ListView(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
+              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.navMargin),
               children: [
-                _buildSectionTitle(context, "Bonnes Réponses", Icons.check_circle_outline, successGreen, "+${totalScore} pts"),
+                _buildSectionTitle(context, "Bonnes Réponses", Icons.check_circle_outline, AppColors.success, "+${totalScore} pts"),
                 ...userAnswers.entries.where((e) => validationResults[e.key] == true).map(
                       (e) => _buildCorrectionCard(context, e.key, e.value, true),
                     ),
                 
                 const SizedBox(height: 24),
                 
-                _buildSectionTitle(context, "Mauvaises Réponses", Icons.highlight_off, errorRed, "0 pts"),
+                _buildSectionTitle(context, "Mauvaises Réponses", Icons.highlight_off, AppColors.error, "0 pts"),
                 ...userAnswers.entries.where((e) => validationResults[e.key] == false).map(
                       (e) => _buildCorrectionCard(context, e.key, e.value, false),
                     ),
@@ -82,11 +82,11 @@ class CorrectionScreen extends StatelessWidget {
       floatingActionButton: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20),
         child: ElevatedButton.icon(
-          onPressed: () => Navigator.pushNamedAndRemoveUntil(context, '/letter', (route) => false),
+          onPressed: () => Navigator.pushNamedAndRemoveUntil(context, RouteNames.letter, (route) => false),
           style: ElevatedButton.styleFrom(
-            backgroundColor: primaryPurple,
+            backgroundColor: AppColors.primaryPurple,
             minimumSize: const Size(double.infinity, 64),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppSpacing.dialogRadius)),
           ),
           icon: const Icon(Icons.refresh, color: Colors.white),
           label: const Text("REJOUER", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white)),
@@ -133,11 +133,11 @@ class CorrectionScreen extends StatelessWidget {
     final isDark = theme.brightness == Brightness.dark;
 
     return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(16),
+      margin: const EdgeInsets.only(bottom: AppSpacing.mdCompact),
+      padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
         color: theme.cardColor,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(AppSpacing.buttonRadius),
         border: Border.all(
           color: isValid 
               ? Colors.green.withOpacity(isDark ? 0.3 : 0.2) 
@@ -150,7 +150,7 @@ class CorrectionScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(category, style: const TextStyle(color: Colors.grey, fontSize: 12, fontWeight: FontWeight.bold)),
+                Text(category, style: AppTextStyles.categoryLabel),
                 const SizedBox(height: 4),
                 Text(
                   answer.isEmpty ? "Pas de réponse" : answer,
@@ -173,7 +173,7 @@ class CorrectionScreen extends StatelessWidget {
               color: isValid 
                   ? Colors.green.withOpacity(isDark ? 0.2 : 0.1) 
                   : Colors.red.withOpacity(isDark ? 0.2 : 0.1),
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(AppSpacing.radiusSm),
             ),
             child: Text(
               isValid ? "+10" : "0",

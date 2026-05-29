@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:petit_bac/core/constants/app_spacing.dart';
+import 'package:petit_bac/core/constants/app_text_styles.dart';
 
 class ExitDialog extends StatelessWidget {
   const ExitDialog({super.key});
@@ -11,16 +13,16 @@ class ExitDialog extends StatelessWidget {
     return Dialog(
       backgroundColor: theme.cardColor,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(28),
+        borderRadius: BorderRadius.circular(AppSpacing.dialogRadiusXl),
         side: isDark ? BorderSide(color: Colors.white.withValues(alpha: 0.05)) : BorderSide.none,
       ),
       child: Padding(
-        padding: const EdgeInsets.all(24.0),
+        padding: const EdgeInsets.all(AppSpacing.screenHorizontal),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Container(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(AppSpacing.md),
               decoration: BoxDecoration(
                 color: Colors.blueAccent.withOpacity(0.1),
                 shape: BoxShape.circle,
@@ -31,7 +33,7 @@ class ExitDialog extends StatelessWidget {
                 size: 32,
               ),
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: AppSpacing.screenHorizontal),
             Text(
               'Quitter la partie ?',
               style: TextStyle(
@@ -40,17 +42,13 @@ class ExitDialog extends StatelessWidget {
                 color: theme.textTheme.titleLarge?.color,
               ),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: AppSpacing.mdCompact),
             const Text(
               'Votre progression actuelle sera perdue.\nÊtes-vous sûr de vouloir abandonner ?',
               textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 14,
-                color: Color(0xFF8A94A6),
-                height: 1.5,
-              ),
+              style: AppTextStyles.exitDialogBody,
             ),
-            const SizedBox(height: 32),
+            const SizedBox(height: AppSpacing.xxl),
             ElevatedButton(
               onPressed: () => Navigator.pop(context),
               style: ElevatedButton.styleFrom(
@@ -58,7 +56,7 @@ class ExitDialog extends StatelessWidget {
                 foregroundColor: Colors.white,
                 minimumSize: const Size(double.infinity, 56),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
+                  borderRadius: BorderRadius.circular(AppSpacing.buttonRadius),
                 ),
                 elevation: 0,
               ),
@@ -67,7 +65,7 @@ class ExitDialog extends StatelessWidget {
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: AppSpacing.mdCompact),
             TextButton(
               onPressed: () {
                 Navigator.pop(context); // close dialog
@@ -76,17 +74,13 @@ class ExitDialog extends StatelessWidget {
               style: TextButton.styleFrom(
                 minimumSize: const Size(double.infinity, 56),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
+                  borderRadius: BorderRadius.circular(AppSpacing.buttonRadius),
                   side: BorderSide(color: isDark ? Colors.white10 : Colors.black.withOpacity(0.05)),
                 ),
               ),
               child: const Text(
                 'Quitter',
-                style: TextStyle(
-                  color: Color(0xFF8A94A6),
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                ),
+                style: AppTextStyles.exitDialogSecondaryButton,
               ),
             ),
           ],
