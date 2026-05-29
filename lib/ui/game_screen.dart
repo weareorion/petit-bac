@@ -5,10 +5,10 @@ import 'package:petit_bac/core/constants/app_spacing.dart';
 import 'package:petit_bac/core/constants/app_text_styles.dart';
 import 'package:petit_bac/services/wikipedia_service.dart';
 import 'package:petit_bac/ui/result_screen.dart';
-import 'package:petit_bac/widgets/exit_dialog.dart';
-import 'package:petit_bac/widgets/game_header.dart';
-import 'package:petit_bac/widgets/game_input_field.dart';
-import 'package:petit_bac/widgets/loading_overlay.dart';
+import 'package:petit_bac/shared/widgets/exit_dialog.dart';
+import 'package:petit_bac/shared/widgets/game_header.dart';
+import 'package:petit_bac/shared/widgets/game_input_field.dart';
+import 'package:petit_bac/shared/widgets/loading_overlay.dart';
 
 class GameScreen extends StatefulWidget {
   final String selectedLetter;

@@ -3,7 +3,7 @@ import 'package:petit_bac/core/constants/app_colors.dart';
 import 'package:petit_bac/core/constants/app_spacing.dart';
 import 'package:petit_bac/core/constants/route_names.dart';
 import 'package:petit_bac/ui/correction_screen.dart';
-import 'package:petit_bac/widgets/action_button.dart';
+import 'package:petit_bac/shared/widgets/action_button.dart';
 
 class ResultScreen extends StatelessWidget {
   final int score;
