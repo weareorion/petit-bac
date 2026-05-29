@@ -7,7 +7,7 @@
 
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:petit_bac/main.dart';
+import 'package:petit_bac/app/app.dart';
 
 void main() {
   testWidgets('Petit Bac smoke test', (WidgetTester tester) async {
