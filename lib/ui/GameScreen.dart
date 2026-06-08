@@ -61,7 +61,11 @@ class _GameScreenState extends State<GameScreen> {
     // Validation via WikipediaService
     final entries = _controllers.entries.toList();
     final validationResultsList = await Future.wait(
-      entries.map((entry) => WikipediaService.isValidWord(entry.value.text, widget.selectedLetter)),
+      entries.map((entry) => WikipediaService.isValidWord(
+            entry.value.text,
+            widget.selectedLetter,
+            category: entry.key,
+          )),
     );
 
     for (int i = 0; i < entries.length; i++) {
