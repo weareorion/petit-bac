@@ -2,29 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:petit_bac/core/constants/app_colors.dart';
 import 'package:petit_bac/core/constants/app_spacing.dart';
 import 'package:petit_bac/core/constants/route_names.dart';
+import 'package:petit_bac/features/game/domain/entities/round.dart';
 import 'package:petit_bac/ui/correction_screen.dart';
 import 'package:petit_bac/shared/widgets/action_button.dart';
 
 class ResultScreen extends StatelessWidget {
-  final int score;
-  final int totalPossible;
-  final int correctAnswers;
-  final int errors;
-  
-  // Correction
-  final String selectedLetter;
-  final Map<String, String> userAnswers;
-  final Map<String, bool> validationResults;
+  final Round round;
 
   const ResultScreen({
     super.key,
-    this.score = 0,
-    this.totalPossible = 70,
-    this.correctAnswers = 0,
-    this.errors = 0,
-    this.selectedLetter = "",
-    this.userAnswers = const {},
-    this.validationResults = const {},
+    required this.round,
   });
 
   @override
@@ -41,34 +28,46 @@ class ResultScreen extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: AppSpacing.screenHorizontal),
           child: Column(
             children: [
-              // Bouton Exit
               Align(
                 alignment: Alignment.topLeft,
                 child: Padding(
                   padding: const EdgeInsets.only(top: 16.0),
                   child: GestureDetector(
                     onTap: () {
-                      Navigator.pushNamedAndRemoveUntil(context, RouteNames.home, (route) => false);
+                      Navigator.pushNamedAndRemoveUntil(
+                        context,
+                        RouteNames.home,
+                        (route) => false,
+                      );
                     },
                     child: Container(
                       padding: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
                         color: theme.cardColor,
                         shape: BoxShape.circle,
-                        border: Border.all(color: isDark ? Colors.white10 : Colors.black.withOpacity(0.05)),
+                        border: Border.all(
+                          color: isDark
+                              ? Colors.white10
+                              : Colors.black.withOpacity(0.05),
+                        ),
                         boxShadow: [
                           BoxShadow(
-                            color: isDark ? Colors.black.withOpacity(0.2) : Colors.black.withOpacity(0.05),
+                            color: isDark
+                                ? Colors.black.withOpacity(0.2)
+                                : Colors.black.withOpacity(0.05),
                             blurRadius: 10,
                           ),
                         ],
                       ),
-                      child: const Icon(Icons.close_rounded, color: Colors.grey, size: 24),
+                      child: const Icon(
+                        Icons.close_rounded,
+                        color: Colors.grey,
+                        size: 24,
+                      ),
                     ),
                   ),
                 ),
               ),
-
               Expanded(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -92,8 +91,6 @@ class ResultScreen extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 40),
-
-                    // Indicateur de score circulaire
                     Stack(
                       alignment: Alignment.center,
                       children: [
@@ -101,17 +98,20 @@ class ResultScreen extends StatelessWidget {
                           width: 200,
                           height: 200,
                           child: CircularProgressIndicator(
-                            value: totalPossible > 0 ? score / totalPossible : 0,
+                            value: round.totalPossible > 0
+                                ? round.totalScore / round.totalPossible
+                                : 0,
                             strokeWidth: 12,
                             backgroundColor: primaryColor.withOpacity(0.1),
-                            valueColor: const AlwaysStoppedAnimation<Color>(primaryColor),
+                            valueColor:
+                                const AlwaysStoppedAnimation<Color>(primaryColor),
                             strokeCap: StrokeCap.round,
                           ),
                         ),
                         Column(
                           children: [
                             Text(
-                              '$score',
+                              '${round.totalScore}',
                               style: TextStyle(
                                 fontSize: 64,
                                 fontWeight: FontWeight.bold,
@@ -119,7 +119,7 @@ class ResultScreen extends StatelessWidget {
                               ),
                             ),
                             Text(
-                              '/ $totalPossible PTS',
+                              '/ ${round.totalPossible} PTS',
                               style: const TextStyle(
                                 fontSize: 18,
                                 color: Colors.grey,
@@ -130,66 +130,63 @@ class ResultScreen extends StatelessWidget {
                         ),
                       ],
                     ),
-
                     const SizedBox(height: 48),
-
-                    // Stats Correct / Erreurs
                     Row(
                       children: [
                         Expanded(
                           child: _buildStatCard(
                             label: 'CORRECT',
-                            value: '$correctAnswers',
+                            value: '${round.correctCount}',
                             color: Colors.green,
-                            bgColor: isDark ? Colors.green.withOpacity(0.15) : AppColors.successBgLight,
+                            bgColor: isDark
+                                ? Colors.green.withOpacity(0.15)
+                                : AppColors.successBgLight,
                           ),
                         ),
                         const SizedBox(width: 16),
                         Expanded(
                           child: _buildStatCard(
                             label: 'ERREURS',
-                            value: '$errors',
+                            value: '${round.errorCount}',
                             color: Colors.red,
-                            bgColor: isDark ? Colors.red.withOpacity(0.15) : AppColors.errorBgLight,
+                            bgColor: isDark
+                                ? Colors.red.withOpacity(0.15)
+                                : AppColors.errorBgLight,
                           ),
                         ),
                       ],
                     ),
-
                     const SizedBox(height: 40),
-
-                    // Bouton Voir la correction
                     ActionButton(
                       label: 'Voir la correction',
                       icon: Icons.assignment_turned_in_rounded,
                       color: theme.cardColor,
-                      textColor: theme.textTheme.bodyLarge?.color ?? AppColors.bodyDark,
+                      textColor:
+                          theme.textTheme.bodyLarge?.color ?? AppColors.bodyDark,
                       onTap: () {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => CorrectionScreen(
-                              selectedLetter: selectedLetter,
-                              userAnswers: userAnswers,
-                              validationResults: validationResults,
-                            ),
+                            builder: (context) =>
+                                CorrectionScreen(round: round),
                           ),
                         );
                       },
                       hasBorder: true,
                       iconColor: Colors.blueAccent,
                     ),
-
                     const SizedBox(height: 16),
-
-                    // Bouton Rejouer
                     ActionButton(
                       label: 'REJOUER',
                       icon: Icons.refresh_rounded,
                       color: primaryColor,
                       textColor: Colors.white,
                       onTap: () {
-                        Navigator.pushNamedAndRemoveUntil(context, RouteNames.letter, (route) => false);
+                        Navigator.pushNamedAndRemoveUntil(
+                          context,
+                          RouteNames.letter,
+                          (route) => false,
+                        );
                       },
                     ),
                   ],
