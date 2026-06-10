@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:petit_bac/core/constants/app_colors.dart';
 import 'package:petit_bac/core/constants/app_spacing.dart';
 import 'package:petit_bac/core/constants/app_text_styles.dart';
+import 'package:petit_bac/core/errors/app_exceptions.dart';
+import 'package:petit_bac/features/game/domain/entities/round.dart';
 import 'package:petit_bac/features/game/presentation/providers/game_session_provider.dart';
 import 'package:petit_bac/ui/result_screen.dart';
 import 'package:petit_bac/shared/widgets/exit_dialog.dart';
@@ -65,6 +67,35 @@ class _GameScreenState extends ConsumerState<GameScreen> {
     ExitDialog.show(context);
   }
 
+  void _onValidationError(Object error) {
+    if (!mounted) return;
+
+    final message = switch (error) {
+      NetworkException() =>
+        'Impossible de vérifier les réponses. Vérifiez votre connexion et réessayez.',
+      ValidationException(:final message) => message,
+      _ => 'Une erreur est survenue. Réessayez.',
+    };
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: AppColors.error,
+        action: SnackBarAction(
+          label: 'Réessayer',
+          textColor: Colors.white,
+          onPressed: _finishGame,
+        ),
+      ),
+    );
+
+    final notifier =
+        ref.read(gameSessionProvider(widget.selectedLetter).notifier);
+    if (notifier.secondsRemaining > 0) {
+      notifier.startTimer(onTimeUp: _finishGame);
+    }
+  }
+
   String _formatTime(int seconds) {
     int mins = seconds ~/ 60;
     int secs = seconds % 60;
@@ -79,6 +110,15 @@ class _GameScreenState extends ConsumerState<GameScreen> {
 
   @override
   Widget build(BuildContext context) {
+    ref.listen<AsyncValue<Round?>>(
+      gameSessionProvider(widget.selectedLetter),
+      (previous, next) {
+        if (next.hasError && (previous == null || previous.isLoading)) {
+          _onValidationError(next.error!);
+        }
+      },
+    );
+
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
     final session = ref.watch(gameSessionProvider(widget.selectedLetter));

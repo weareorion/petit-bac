@@ -1,3 +1,4 @@
+import 'package:petit_bac/core/errors/app_exceptions.dart';
 import 'package:petit_bac/data/datasources/wikipedia_datasource.dart';
 import 'package:petit_bac/utils/string_utils.dart';
 
@@ -27,8 +28,10 @@ class WordValidationRepository {
       final normInput = StringUtils.normalizeForComparison(cleanedWord);
 
       return normTop.contains(normInput) || normInput.contains(normTop);
-    } catch (_) {
-      return false;
+    } on NetworkException {
+      rethrow;
+    } catch (e) {
+      throw NetworkException('Word validation failed: $e');
     }
   }
 }

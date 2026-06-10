@@ -1,3 +1,4 @@
+import 'package:petit_bac/core/errors/app_exceptions.dart';
 import 'package:petit_bac/data/repositories/word_validation_repository.dart';
 import 'package:petit_bac/features/game/domain/entities/answer.dart';
 import 'package:petit_bac/features/game/domain/entities/round.dart';
@@ -12,6 +13,13 @@ class ValidateRound {
     required String letter,
     required Map<String, String> answersByCategory,
   }) async {
+    if (letter.trim().isEmpty) {
+      throw const ValidationException('La lettre du jeu est invalide.');
+    }
+    if (answersByCategory.isEmpty) {
+      throw const ValidationException('Aucune réponse à valider.');
+    }
+
     final entries = answersByCategory.entries.toList();
     final validationResults = await Future.wait(
       entries.map(

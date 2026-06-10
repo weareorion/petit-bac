@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:petit_bac/core/constants/app_constants.dart';
 import 'package:petit_bac/core/constants/route_names.dart';
 import 'package:petit_bac/features/settings/domain/entities/app_settings.dart';
 import 'package:petit_bac/features/settings/presentation/providers/settings_provider.dart';
@@ -252,7 +253,7 @@ class Settings extends ConsumerWidget {
                   child: Column(
                     children: [
                       Text(
-                        'Version 2.4.0',
+                        'Version ${AppConstants.appVersion}',
                         style: TextStyle(color: isDark ? Colors.white38 : Colors.grey, fontSize: 12),
                       ),
                       const SizedBox(height: 4),
