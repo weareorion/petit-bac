@@ -5,16 +5,21 @@
 // gestures. You can also use WidgetTester to find child widgets in the widget
 // tree, read text, and verify that the values of widget properties are correct.
 
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-
 import 'package:petit_bac/app/app.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   testWidgets('Petit Bac smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+    SharedPreferences.setMockInitialValues({});
 
-    // Verify that the app's title and play button exist.
+    await tester.pumpWidget(
+      const ProviderScope(child: MyApp()),
+    );
+    await tester.pump();
+    await tester.pump();
+
     expect(find.text('Petit Bac'), findsOneWidget);
     expect(find.text('Jouer'), findsOneWidget);
   });

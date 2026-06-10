@@ -1,4 +1,4 @@
-/// SharedPreferences key names for [SettingsService].
+/// SharedPreferences key names for app settings.
 class PrefsKeys {
   PrefsKeys._();
 

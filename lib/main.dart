@@ -1,12 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:petit_bac/app/app.dart';
-import 'package:petit_bac/services/settings_service.dart';
 
-void main() async {
+void main() {
   WidgetsFlutterBinding.ensureInitialized();
-
-  final settingsService = SettingsService();
-  await settingsService.init();
-
-  runApp(const MyApp());
+  runApp(const ProviderScope(child: MyApp()));
 }

@@ -1,14 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:petit_bac/core/constants/route_names.dart';
-import 'package:petit_bac/services/settings_service.dart';
+import 'package:petit_bac/features/settings/domain/entities/app_settings.dart';
+import 'package:petit_bac/features/settings/presentation/providers/settings_provider.dart';
 import 'package:petit_bac/ui/nav_bar.dart';
 
-class Settings extends StatelessWidget {
+class Settings extends ConsumerWidget {
   const Settings({super.key});
 
-  // Dialogue pour modifier le pseudo
-  void _showEditProfileDialog(BuildContext context, SettingsService settingsService) {
-    final controller = TextEditingController(text: settingsService.username);
+  void _showEditProfileDialog(
+    BuildContext context,
+    WidgetRef ref,
+    AppSettings settings,
+  ) {
+    final controller = TextEditingController(text: settings.username);
     final theme = Theme.of(context);
 
     showDialog(
@@ -43,7 +48,7 @@ class Settings extends StatelessWidget {
             ),
             ElevatedButton(
               onPressed: () {
-                settingsService.updateUsername(controller.text);
+                ref.read(settingsProvider.notifier).updateUsername(controller.text);
                 Navigator.pop(context);
               },
               style: ElevatedButton.styleFrom(
@@ -59,8 +64,7 @@ class Settings extends StatelessWidget {
     );
   }
 
-  // Dialogue de sélection de langue
-  void _showLanguageDialog(BuildContext context, SettingsService settingsService) {
+  void _showLanguageDialog(BuildContext context, WidgetRef ref, AppSettings settings) {
     final theme = Theme.of(context);
 
     showDialog(
@@ -76,9 +80,9 @@ class Settings extends StatelessWidget {
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              _buildLanguageOption(context, 'Français', settingsService),
+              _buildLanguageOption(context, ref, 'Français', settings),
               const Divider(height: 1),
-              _buildLanguageOption(context, 'English', settingsService),
+              _buildLanguageOption(context, ref, 'English', settings),
             ],
           ),
         );
@@ -86,8 +90,13 @@ class Settings extends StatelessWidget {
     );
   }
 
-  Widget _buildLanguageOption(BuildContext context, String lang, SettingsService settingsService) {
-    final isSelected = settingsService.language == lang;
+  Widget _buildLanguageOption(
+    BuildContext context,
+    WidgetRef ref,
+    String lang,
+    AppSettings settings,
+  ) {
+    final isSelected = settings.language == lang;
     return ListTile(
       title: Text(
         lang,
@@ -98,14 +107,13 @@ class Settings extends StatelessWidget {
       ),
       trailing: isSelected ? const Icon(Icons.check, color: Colors.blueAccent) : null,
       onTap: () {
-        settingsService.setLanguage(lang);
+        ref.read(settingsProvider.notifier).setLanguage(lang);
         Navigator.pop(context);
       },
     );
   }
 
-  // Confirmation de réinitialisation
-  void _showResetDialog(BuildContext context, SettingsService settingsService) {
+  void _showResetDialog(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
 
     showDialog(
@@ -128,7 +136,7 @@ class Settings extends StatelessWidget {
             ),
             TextButton(
               onPressed: () {
-                settingsService.resetSettings();
+                ref.read(settingsProvider.notifier).resetSettings();
                 Navigator.pop(context);
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
@@ -146,14 +154,19 @@ class Settings extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
-    final settingsService = SettingsService();
+  Widget build(BuildContext context, WidgetRef ref) {
+    final settingsAsync = ref.watch(settingsProvider);
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
 
-    return ListenableBuilder(
-      listenable: settingsService,
-      builder: (context, _) {
+    return settingsAsync.when(
+      loading: () => const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      ),
+      error: (error, _) => Scaffold(
+        body: Center(child: Text('Erreur: $error')),
+      ),
+      data: (settings) {
         final textColor = theme.textTheme.bodyLarge?.color ?? Colors.black;
 
         return Scaffold(
@@ -177,7 +190,7 @@ class Settings extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const SizedBox(height: 10),
-                _buildProfileCard(context, settingsService),
+                _buildProfileCard(context, ref, settings),
                 const SizedBox(height: 30),
                 _buildSectionTitle('PREFERENCE DE JEU'),
                 _buildSettingsContainer(context, [
@@ -186,8 +199,9 @@ class Settings extends StatelessWidget {
                     icon: Icons.volume_up_outlined,
                     title: 'Sons',
                     trailing: Switch(
-                      value: settingsService.soundsEnabled,
-                      onChanged: (val) => settingsService.toggleSounds(val),
+                      value: settings.soundsEnabled,
+                      onChanged: (val) =>
+                          ref.read(settingsProvider.notifier).toggleSounds(val),
                       activeColor: Colors.blueAccent,
                     ),
                   ),
@@ -197,8 +211,9 @@ class Settings extends StatelessWidget {
                     icon: Icons.dark_mode_outlined,
                     title: 'Mode sombre',
                     trailing: Switch(
-                      value: settingsService.isDarkMode,
-                      onChanged: (val) => settingsService.toggleDarkMode(val),
+                      value: settings.isDarkMode,
+                      onChanged: (val) =>
+                          ref.read(settingsProvider.notifier).toggleDarkMode(val),
                       activeColor: Colors.blueAccent,
                     ),
                   ),
@@ -214,13 +229,13 @@ class Settings extends StatelessWidget {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Text(
-                          settingsService.language,
+                          settings.language,
                           style: const TextStyle(color: Colors.grey),
                         ),
                         const Icon(Icons.chevron_right, color: Colors.grey),
                       ],
                     ),
-                    onTap: () => _showLanguageDialog(context, settingsService),
+                    onTap: () => _showLanguageDialog(context, ref, settings),
                   ),
                   Divider(height: 1, color: isDark ? Colors.white10 : Colors.black.withOpacity(0.05)),
                   _buildSettingRow(
@@ -229,7 +244,7 @@ class Settings extends StatelessWidget {
                     title: 'Réinitialiser l\'application',
                     textColor: Colors.redAccent,
                     iconColor: Colors.redAccent,
-                    onTap: () => _showResetDialog(context, settingsService),
+                    onTap: () => _showResetDialog(context, ref),
                   ),
                 ]),
                 const SizedBox(height: 40),
@@ -258,9 +273,11 @@ class Settings extends StatelessWidget {
     );
   }
 
-  // --- Composants internes ---
-
-  Widget _buildProfileCard(BuildContext context, SettingsService settingsService) {
+  Widget _buildProfileCard(
+    BuildContext context,
+    WidgetRef ref,
+    AppSettings settings,
+  ) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
 
@@ -291,7 +308,7 @@ class Settings extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  settingsService.username,
+                  settings.username,
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 18,
@@ -299,14 +316,14 @@ class Settings extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  'Niveau ${settingsService.userLevel} • ${settingsService.userXp} XP',
+                  'Niveau ${settings.userLevel} • ${settings.userXp} XP',
                   style: const TextStyle(color: Colors.grey),
                 ),
               ],
             ),
           ),
           TextButton(
-            onPressed: () => _showEditProfileDialog(context, settingsService),
+            onPressed: () => _showEditProfileDialog(context, ref, settings),
             child: const Text(
               'Modifier',
               style: TextStyle(
@@ -371,4 +388,3 @@ class Settings extends StatelessWidget {
     );
   }
 }
-
