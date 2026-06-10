@@ -1,52 +1,43 @@
 import 'dart:async';
 
-import 'package:flutter/foundation.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:petit_bac/core/constants/app_constants.dart';
 import 'package:petit_bac/data/datasources/wikipedia_datasource.dart';
 import 'package:petit_bac/data/repositories/word_validation_repository.dart';
 import 'package:petit_bac/features/game/domain/entities/round.dart';
 import 'package:petit_bac/features/game/domain/usecases/validate_round.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-/// Manages an in-progress game round (timer, answers, validation).
-///
-/// Plain [ChangeNotifier] stub until Phase 3 Riverpod migration.
-class GameSessionProvider extends ChangeNotifier {
-  GameSessionProvider({
-    required String letter,
-    required ValidateRound validateRound,
-    int initialSeconds = AppConstants.defaultTimerSeconds,
-  })  : _letter = letter,
-        _validateRound = validateRound,
-        _secondsRemaining = initialSeconds;
+part 'game_session_provider.g.dart';
 
-  factory GameSessionProvider.create(String letter) {
-    return GameSessionProvider(
-      letter: letter,
-      validateRound: ValidateRound(
-        WordValidationRepository(WikipediaDataSource()),
-      ),
-    );
+@riverpod
+ValidateRound validateRound(Ref ref) {
+  return ValidateRound(WordValidationRepository(WikipediaDataSource()));
+}
+
+/// Manages an in-progress game round: timer, validation, and completed [Round].
+@riverpod
+class GameSession extends _$GameSession {
+  Timer? _timer;
+  int _secondsRemaining = AppConstants.defaultTimerSeconds;
+
+  @override
+  FutureOr<Round?> build(String letter) {
+    _secondsRemaining = AppConstants.defaultTimerSeconds;
+    ref.onDispose(() => _timer?.cancel());
+    return null;
   }
 
-  final ValidateRound _validateRound;
-  final String _letter;
+  ValidateRound get _validateRound => ref.read(validateRoundProvider);
 
-  int _secondsRemaining;
-  bool _isLoading = false;
-  Round? _completedRound;
-  Timer? _timer;
-
-  String get letter => _letter;
   int get secondsRemaining => _secondsRemaining;
-  bool get isLoading => _isLoading;
-  Round? get completedRound => _completedRound;
 
-  void startTimer({required VoidCallback onTimeUp}) {
+  void startTimer({required void Function() onTimeUp}) {
     _timer?.cancel();
-    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+    _timer = Timer.periodic(const Duration(seconds: 1), (_) {
       if (_secondsRemaining > 0) {
         _secondsRemaining--;
-        notifyListeners();
+        _notifyInProgress();
       } else {
         _timer?.cancel();
         onTimeUp();
@@ -57,27 +48,23 @@ class GameSessionProvider extends ChangeNotifier {
   void cancelTimer() => _timer?.cancel();
 
   Future<Round?> finishGame(Map<String, String> answersByCategory) async {
-    if (_isLoading) return null;
+    if (state.isLoading) return null;
 
     cancelTimer();
-    _isLoading = true;
-    notifyListeners();
+    state = const AsyncLoading();
 
-    try {
-      _completedRound = await _validateRound(
-        letter: _letter,
+    state = await AsyncValue.guard(
+      () => _validateRound(
+        letter: letter,
         answersByCategory: answersByCategory,
-      );
-      return _completedRound;
-    } finally {
-      _isLoading = false;
-      notifyListeners();
-    }
+      ),
+    );
+    return state.value;
   }
 
-  @override
-  void dispose() {
-    cancelTimer();
-    super.dispose();
+  void _notifyInProgress() {
+    if (!state.isLoading) {
+      state = const AsyncData(null);
+    }
   }
 }
