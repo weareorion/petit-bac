@@ -5,7 +5,6 @@
 // gestures. You can also use WidgetTester to find child widgets in the widget
 // tree, read text, and verify that the values of widget properties are correct.
 
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:petit_bac/app/app.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -14,9 +13,7 @@ void main() {
   testWidgets('Petit Bac smoke test', (WidgetTester tester) async {
     SharedPreferences.setMockInitialValues({});
 
-    await tester.pumpWidget(
-      const ProviderScope(child: MyApp()),
-    );
+    await tester.pumpWidget(const PetitBacApp());
     await tester.pump();
     await tester.pump();
 

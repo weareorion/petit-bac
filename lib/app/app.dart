@@ -5,6 +5,16 @@ import 'package:petit_bac/core/constants/app_theme.dart';
 import 'package:petit_bac/core/constants/route_names.dart';
 import 'package:petit_bac/features/settings/presentation/providers/settings_provider.dart';
 
+/// Root widget: provides Riverpod scope and boots [MyApp].
+class PetitBacApp extends StatelessWidget {
+  const PetitBacApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const ProviderScope(child: MyApp());
+  }
+}
+
 class MyApp extends ConsumerWidget {
   const MyApp({super.key});
 
