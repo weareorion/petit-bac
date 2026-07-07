@@ -11,7 +11,12 @@ class _FakeWordValidationRepository extends WordValidationRepository {
   final Future<bool> Function(String word, String letter) _validator;
 
   @override
-  Future<bool> isValid(String word, String letter) => _validator(word, letter);
+  Future<bool> isValid(
+    String word,
+    String letter, {
+    String? category,
+  }) =>
+      _validator(word, letter);
 }
 
 void main() {

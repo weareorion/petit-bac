@@ -23,7 +23,11 @@ class ValidateRound {
     final entries = answersByCategory.entries.toList();
     final validationResults = await Future.wait(
       entries.map(
-        (entry) => _repository.isValid(entry.value.trim(), letter),
+        (entry) => _repository.isValid(
+          entry.value.trim(),
+          letter,
+          category: entry.key,
+        ),
       ),
     );
 

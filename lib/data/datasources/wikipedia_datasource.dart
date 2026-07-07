@@ -10,8 +10,11 @@ class WikipediaDataSource {
 
   static const _host = 'fr.wikipedia.org';
 
-  /// Returns the title of the top Wikipedia search hit, or null if none.
-  Future<String?> fetchTopSearchTitle(String searchTerm) async {
+  /// Returns Wikipedia search result titles, or an empty list if none.
+  Future<List<String>> fetchSearchTitles(
+    String searchTerm, {
+    int limit = 5,
+  }) async {
     final uri = Uri.https(
       _host,
       '/w/api.php',
@@ -20,7 +23,7 @@ class WikipediaDataSource {
         'format': 'json',
         'list': 'search',
         'srsearch': searchTerm,
-        'srlimit': '1',
+        'srlimit': limit.toString(),
       },
     );
 
@@ -37,13 +40,22 @@ class WikipediaDataSource {
       final query = data['query'] as Map<String, dynamic>?;
       final searchResults = query?['search'] as List?;
 
-      if (searchResults == null || searchResults.isEmpty) return null;
+      if (searchResults == null || searchResults.isEmpty) return const [];
 
-      return searchResults[0]['title']?.toString();
+      return searchResults
+          .map((result) => result['title']?.toString())
+          .whereType<String>()
+          .toList();
     } on NetworkException {
       rethrow;
     } catch (e) {
       throw NetworkException('Wikipedia search failed: $e');
     }
+  }
+
+  /// Returns the title of the top Wikipedia search hit, or null if none.
+  Future<String?> fetchTopSearchTitle(String searchTerm) async {
+    final titles = await fetchSearchTitles(searchTerm, limit: 1);
+    return titles.isEmpty ? null : titles.first;
   }
 }
